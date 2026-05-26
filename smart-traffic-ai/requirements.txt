@@ -1,0 +1,49 @@
+# ============================================================
+# smart-traffic-ai — Python Requirements
+# ============================================================
+
+# ── Flask & Web ──────────────────────────────────────────────
+flask==3.0.3
+flask-cors==4.0.1
+flask-jwt-extended==4.6.0
+flask-sqlalchemy==3.1.1
+flask-migrate==4.0.7
+gunicorn==22.0.0
+python-dotenv==1.0.1
+werkzeug==3.0.3
+
+# ── Database ─────────────────────────────────────────────────
+sqlalchemy==2.0.30
+
+# ── Computer Vision & Detection ──────────────────────────────
+opencv-python==4.10.0.84
+ultralytics==8.2.18          # YOLOv8
+Pillow==10.3.0
+
+# ── Deep Learning ────────────────────────────────────────────
+torch==2.3.0
+torchvision==0.18.0
+tensorflow==2.16.1
+keras==3.3.3
+
+# ── Machine Learning ─────────────────────────────────────────
+scikit-learn==1.5.0
+xgboost==2.0.3
+imbalanced-learn==0.12.3
+joblib==1.4.2
+
+# ── Data Science ─────────────────────────────────────────────
+numpy==1.26.4
+pandas==2.2.2
+scipy==1.13.1
+matplotlib==3.9.0
+seaborn==0.13.2
+
+# ── Analytics & Visualization ────────────────────────────────
+plotly==5.22.0
+
+# ── Utilities ────────────────────────────────────────────────
+requests==2.32.3
+tqdm==4.66.4
+pyyaml==6.0.1
+httpx==0.27.0

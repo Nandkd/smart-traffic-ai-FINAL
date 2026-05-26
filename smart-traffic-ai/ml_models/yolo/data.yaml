@@ -1,0 +1,22 @@
+# ml_models/yolo/data.yaml
+# YOLOv8 dataset configuration for traffic vehicle detection
+
+path: ../../datasets          # root dataset dir
+train: processed/images/train  # relative to `path`
+val: processed/images/val
+test: processed/images/test
+
+# Number of classes
+nc: 5
+
+# Class names
+names:
+  0: car
+  1: motorcycle
+  2: bus
+  3: truck
+  4: ambulance
+
+# Optional: class weights for imbalanced training (ambulance is rare)
+# Used in loss calculation — higher weight = more penalty for missing that class
+class_weights: [1.0, 1.0, 1.2, 1.2, 4.0]

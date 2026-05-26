@@ -1,0 +1,99 @@
+# ============================================================
+# smart-traffic-ai — .gitignore
+# ============================================================
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.pytest_cache/
+pip-wheel-metadata/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# ── Node / Frontend ────────────────────────────────────────────
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp.js
+.yarn/
+
+# ── Environment ────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Database ───────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── ML Weights / Datasets ─────────────────────────────────────
+# Large binary model files — store in cloud / Git LFS
+ml_models/weights/*.pt
+ml_models/weights/*.pth
+ml_models/weights/*.pkl
+ml_models/weights/*.onnx
+
+# Training run outputs (large)
+ml_models/yolo/runs/
+ml_models/cnn/plots/
+ml_models/congestion/plots/
+
+# Raw datasets (too large for git)
+datasets/raw/
+datasets/augmented/
+
+# Processed images (keep only CSVs)
+datasets/processed/images/
+datasets/processed/labels/
+datasets/processed/ambulance/
+
+# ── IDE / OS ───────────────────────────────────────────────────
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Uploads ────────────────────────────────────────────────────
+backend/uploads/
+
+# ── Analytics outputs ──────────────────────────────────────────
+analytics/outputs/
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Coverage ──────────────────────────────────────────────────
+.coverage
+coverage.xml
+
+# ── Misc ──────────────────────────────────────────────────────
+*.bak
+*.tmp
+*.orig

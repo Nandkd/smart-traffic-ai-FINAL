@@ -1,0 +1,70 @@
+# ml_models/yolo/hyperparameters.yaml
+# =====================================
+# Custom hyperparameter configuration for YOLOv8 traffic detection training.
+# Pass to train.py via: model.train(cfg="hyperparameters.yaml")
+
+# ── Optimizer ─────────────────────────────────────────────────
+lr0: 0.01          # Initial learning rate (SGD=1E-2, Adam=1E-3)
+lrf: 0.01          # Final learning rate = lr0 * lrf
+momentum: 0.937    # SGD momentum / Adam beta1
+weight_decay: 0.0005
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+
+# ── Loss weights ──────────────────────────────────────────────
+box: 7.5           # Box regression loss gain
+cls: 0.5           # Classification loss gain
+dfl: 1.5           # Distribution focal loss gain
+
+# ── Augmentation ──────────────────────────────────────────────
+hsv_h: 0.015       # Image HSV-Hue augmentation (fraction)
+hsv_s: 0.700       # Image HSV-Saturation augmentation
+hsv_v: 0.400       # Image HSV-Value augmentation
+degrees: 5.0       # Image rotation (+/- deg)
+translate: 0.1     # Image translation (+/- fraction)
+scale: 0.5         # Image scale (+/- gain)
+shear: 0.0         # Image shear (+/- deg)
+perspective: 0.0   # Image perspective (+/- fraction)
+flipud: 0.0        # Image flip up-down (probability)
+fliplr: 0.5        # Image flip left-right (probability)
+bgr: 0.0           # Image channel BGR (probability)
+mosaic: 1.0        # Image mosaic (probability)
+mixup: 0.1         # Image mixup (probability)
+copy_paste: 0.1    # Segment copy-paste (probability)
+auto_augment: randaugment  # Auto augmentation policy
+
+# ── Training ──────────────────────────────────────────────────
+epochs: 100
+patience: 20       # Early stopping patience
+batch: 16
+imgsz: 640
+save: true
+save_period: 10    # Save checkpoint every N epochs
+cache: false
+workers: 4
+cos_lr: false      # Cosine LR scheduler
+close_mosaic: 10   # Disable mosaic in final N epochs
+resume: false
+amp: true          # Automatic mixed precision (FP16)
+overlap_mask: true
+mask_ratio: 4
+dropout: 0.0
+val: true
+plots: true
+
+# ── NMS ───────────────────────────────────────────────────────
+conf: 0.25         # NMS confidence threshold
+iou: 0.70          # NMS IoU threshold
+max_det: 300       # Max detections per image
+agnostic_nms: false
+retina_masks: false
+
+# ── Export ────────────────────────────────────────────────────
+format: pytorch    # Export format (pytorch, onnx, tensorrt, ...)
+keras: false
+optimize: false    # TorchScript optimization
+int8: false
+dynamic: false
+simplify: false
+opset: 17          # ONNX opset version

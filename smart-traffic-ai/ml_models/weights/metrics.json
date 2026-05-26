@@ -1,0 +1,22 @@
+{
+  "Random Forest": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "auc": 1.0
+  },
+  "XGBoost": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "auc": 1.0
+  },
+  "Logistic Regression": {
+    "accuracy": 0.9945,
+    "f1": 0.9945079470907398,
+    "auc": 0.9998729696702408
+  },
+  "Voting Ensemble": {
+    "accuracy": 1.0,
+    "f1": 1.0,
+    "auc": 1.0
+  }
+}
