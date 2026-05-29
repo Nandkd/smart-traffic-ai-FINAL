@@ -1,0 +1,1026 @@
+C:\Users\Administrator\smart-traffic-ai-FINAL\smart-traffic-ai\backend\app.py:101: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now = datetime.utcnow()
+Admin created: admin / admin123
+Demo data seeded
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://20.100.100.132:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+127.0.0.1 - - [26/May/2026 13:42:54] "GET /api/health HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+127.0.0.1 - - [26/May/2026 13:43:31] "POST /api/auth/login HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:31] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:39] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:39] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:43] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:43] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:51] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:51] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:43:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:07] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:07] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:12] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:12] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:20] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:20] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:40] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:56] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:44:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:02] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:04] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:08] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:10] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:12] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:14] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:16] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:40] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:56] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:45:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:02] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:04] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:08] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:10] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:12] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:14] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:16] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:21] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:46:21] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:30] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:30] "GET /api/predict/peak-hours?day=2 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:47:54] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:28] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:28] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:40] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:56] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:48:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:02] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:04] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:08] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:10] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:12] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:14] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:16] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:40] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:56] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:49:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:02] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:04] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:08] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:13] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:16] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:17] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:50:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:51:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:52:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:53:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/auth/users HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/auth/users HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:54:00] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "POST /api/auth/register HTTP/1.1" 201 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:55:45] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:00] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:00] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:00] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:00] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:00] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:55] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:55] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:55] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:55] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:56:55] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:55] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:55] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:55] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:55] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:57:55] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:55] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:55] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:55] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:55] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:58:55] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:55] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:55] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:55] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:55] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 13:59:55] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:55] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:55] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:55] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:55] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:00:55] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:10] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:10] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:10] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:10] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:25] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:25] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:25] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:25] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:25] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:40] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:40] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:40] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:40] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [26/May/2026 14:01:40] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:30:47] "GET /api/traffic/stats HTTP/1.1" 401 -
+127.0.0.1 - - [29/May/2026 00:30:47] "GET /api/traffic/hourly HTTP/1.1" 401 -
+127.0.0.1 - - [29/May/2026 00:30:47] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 401 -
+127.0.0.1 - - [29/May/2026 00:30:47] "GET /api/signals/ HTTP/1.1" 401 -
+127.0.0.1 - - [29/May/2026 00:30:47] "GET /api/analytics/trends HTTP/1.1" 401 -
+127.0.0.1 - - [29/May/2026 00:35:14] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:14] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:29] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:29] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:29] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:29] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:29] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:44] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:44] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:44] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:44] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:44] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:59] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:59] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:59] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:59] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:35:59] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:14] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:14] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:14] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:14] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:14] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:29] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:29] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:29] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:29] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:29] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:45] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:45] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:45] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:45] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:45] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:59] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:59] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:59] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:59] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:36:59] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:14] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:14] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:14] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:14] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:14] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:18] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:18] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:40] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:56] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:37:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:00] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:00] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:10] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:14] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:14] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:14] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:14] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:16] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:34] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:34] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:44] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:38:54] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:04] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:14] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:24] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:31] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:31] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:39:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:40:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:41:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:42:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:43:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:44:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:45:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:46:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:47:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:48:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:29] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:31] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:35] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:53] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:55] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:49:59] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:50:01] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:50:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:50:05] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:50:07] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:50:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:49] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:51:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:53:08] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 00:53:08] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\analytics.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\detection.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\crossroad.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\crossroad.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\crossroad.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\analytics.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\analytics.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [29/May/2026 01:13:33] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:33] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:37] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:37] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:37] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:43] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:47] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:48] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:48] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:13:48] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:02] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:02] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:02] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:02] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:03] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:17] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:17] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:17] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:17] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:17] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/ml-stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/ml-stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:18] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:35] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:35] "GET /api/predict/peak-hours?day=5 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:40] "POST /api/predict/congestion HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:47] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:47] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:14:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:17:24] "POST /api/detect/ambulance HTTP/1.1" 400 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/auth/users HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/auth/users HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:21] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:41] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:41] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:41] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:46] "POST /api/predict/signal-timing HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:47] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:22:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:10] "POST /api/detect/ambulance HTTP/1.1" 400 -
+127.0.0.1 - - [29/May/2026 01:23:18] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:18] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:22] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:26] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:28] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:32] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:36] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:51] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:51] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:51] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:51] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:23:51] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:06] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:06] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:06] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:06] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:06] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:21] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:21] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:21] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:21] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:21] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:36] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:36] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:36] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:36] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:36] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:51] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:51] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:51] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:51] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:24:51] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:06] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:06] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:06] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:06] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:06] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:21] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:21] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:21] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:21] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:25:21] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:26:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:26:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:26:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:26:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:26:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:27:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:27:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:27:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:27:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:27:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:28:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:28:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:28:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:28:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:28:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:41] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:41] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:41] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:41] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:41] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:51] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:51] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:51] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:51] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:29:51] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:06] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:06] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:06] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:06] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:06] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:11] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:11] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:11] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:13] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:17] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:19] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:23] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:25] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:27] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:27] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:30:57] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:12] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:24] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:27] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:33] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:36] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:39] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:42] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:45] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:51] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:31:54] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:32:20] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:32:58] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:00] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:03] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:06] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:09] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:12] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:15] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:18] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:21] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/vehicle-breakdown?hours=168 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/congestion-history?hours=24 HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/ml-stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/summary HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/heatmap HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/ml-stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:23] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:44] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:44] "GET /api/crossroad/models HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:44] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:46] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:48] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:50] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:52] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:33:53] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:08] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:08] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:08] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:08] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:08] "GET /api/analytics/trends HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+127.0.0.1 - - [29/May/2026 01:34:17] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:23] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:23] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:23] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:23] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:23] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:27] "POST /api/auth/login HTTP/1.1" 200 -
+Creating new Ultralytics Settings v0.0.6 file  
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Administrator\AppData\Roaming\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/quickstart/#ultralytics-settings.
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [29/May/2026 01:34:38] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:38] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:38] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:38] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:38] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:39] "POST /api/detect/ambulance HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:53] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:53] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:53] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:53] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:34:53] "GET /api/analytics/trends HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+127.0.0.1 - - [29/May/2026 01:35:00] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:02] "POST /api/crossroad/upload/north HTTP/1.1" 202 -
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 0% ──────────── 37.7KB/18.4MB 103.3KB/s 0.1s<3:02[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 0% ──────────── 94.3KB/18.4MB 232.7KB/s 0.2s<1:21[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 1% ──────────── 245.2KB/18.4MB 1.3MB/s 0.3s<14.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 3% ──────────── 490.4KB/18.4MB 2.4MB/s 0.4s<7.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 3% ──────────── 660.1KB/18.4MB 1.6MB/s 0.5s<11.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 5% ╸─────────── 999.6KB/18.4MB 3.1MB/s 0.6s<5.7s127.0.0.1 - - [29/May/2026 01:35:04] "POST /api/crossroad/upload/south HTTP/1.1" 202 -
+[south] YOLO load failed: PytorchStreamReader failed reading zip archive: failed finding central directory. This is an internal miniz error. If you are seeing this error, there is a high likelihood that your checkpoint file is corrupted. This can happen if the checkpoint was not saved properly, was transferred incorrectly, or the file was modified after saving. — using OpenCV
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 7% ╸─────────── 1.2/18.4MB 2.0MB/s 0.8s<8.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 8% ━─────────── 1.6/18.4MB 3.4MB/s 0.9s<4.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 10% ━─────────── 1.9/18.4MB 3.1MB/s 1.0s<5.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 11% ━─────────── 2.1/18.4MB 2.0MB/s 1.1s<8.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 13% ━╸────────── 2.4/18.4MB 2.3MB/s 1.2s<6.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 14% ━╸────────── 2.5/18.4MB 1.8MB/s 1.3s<8.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 16% ━╸────────── 2.9/18.4MB 2.8MB/s 1.4s<5.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 17% ━━────────── 3.1/18.4MB 2.5MB/s 1.5s<6.0s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 18% ━━────────── 3.4/18.4MB 2.3MB/s 1.6s<6.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 20% ━━────────── 3.7/18.4MB 3.5MB/s 1.7s<4.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 22% ━━╸───────── 4.0/18.4MB 2.5MB/s 1.8s<5.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 23% ━━╸───────── 4.3/18.4MB 2.9MB/s 1.9s<4.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 25% ━━╸───────── 4.6/18.4MB 2.9MB/s 2.0s<4.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 28% ━━━───────── 5.1/18.4MB 4.2MB/s 2.2s<3.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 30% ━━━╸──────── 5.5/18.4MB 3.5MB/s 2.3s<3.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 31% ━━━╸──────── 5.7/18.4MB 2.5MB/s 2.4s<5.0s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 33% ━━━╸──────── 6.0/18.4MB 3.3MB/s 2.5s<3.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 34% ━━━━──────── 6.3/18.4MB 2.1MB/s 2.6s<5.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 36% ━━━━──────── 6.6/18.4MB 2.8MB/s 2.7s<4.3s127.0.0.1 - - [29/May/2026 01:35:06] "POST /api/crossroad/upload/east HTTP/1.1" 202 -
+[east] YOLO load failed: PytorchStreamReader failed reading zip archive: failed finding central directory. This is an internal miniz error. If you are seeing this error, there is a high likelihood that your checkpoint file is corrupted. This can happen if the checkpoint was not saved properly, was transferred incorrectly, or the file was modified after saving. — using OpenCV
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 37% ━━━━──────── 6.9/18.4MB 2.5MB/s 2.8s<4.6s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 39% ━━━━╸─────── 7.1/18.4MB 2.8MB/s 2.9s<4.0s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 40% ━━━━╸─────── 7.4/18.4MB 1.6MB/s 3.0s<7.0s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 42% ━━━━━─────── 7.8/18.4MB 3.8MB/s 3.1s<2.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 44% ━━━━━─────── 8.1/18.4MB 3.0MB/s 3.2s<3.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 45% ━━━━━─────── 8.3/18.4MB 2.1MB/s 3.4s<4.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 47% ━━━━━╸────── 8.6/18.4MB 1.7MB/s 3.5s<5.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 47% ━━━━━╸────── 8.7/18.4MB 1.3MB/s 3.6s<7.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 49% ━━━━━╸────── 9.0/18.4MB 2.5MB/s 3.7s<3.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 50% ━━━━━╸────── 9.1/18.4MB 1003.8KB/s 3.9s<9.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 51% ━━━━━━────── 9.4/18.4MB 2.0MB/s 4.0s<4.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 52% ━━━━━━────── 9.6/18.4MB 2.1MB/s 4.1s<4.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 52% ━━━━━━────── 9.7/18.4MB 249.9KB/s 4.3s<35.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 54% ━━━━━━────── 9.9/18.4MB 2.2MB/s 4.5s<3.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 55% ━━━━━━╸───── 10.1/18.4MB 1.5MB/s 4.6s<5.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 55% ━━━━━━╸───── 10.2/18.4MB 377.3KB/s 4.7s<22.4s127.0.0.1 - - [29/May/2026 01:35:08] "POST /api/crossroad/upload/west HTTP/1.1" 202 -
+[west] YOLO load failed: PytorchStreamReader failed reading zip archive: failed finding central directory. This is an internal miniz error. If you are seeing this error, there is a high likelihood that your checkpoint file is corrupted. This can happen if the checkpoint was not saved properly, was transferred incorrectly, or the file was modified after saving. — using OpenCV
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 56% ━━━━━━╸───── 10.3/18.4MB 445.5KB/s 4.9s<18.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 57% ━━━━━━╸───── 10.5/18.4MB 1.9MB/s 5.0s<4.1s127.0.0.1 - - [29/May/2026 01:35:08] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:08] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 58% ━━━━━━━───── 10.8/18.4MB 2.4MB/s 5.1s<3.2s127.0.0.1 - - [29/May/2026 01:35:08] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:08] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:08] "GET /api/analytics/trends HTTP/1.1" 200 -
+[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 60% ━━━━━━━───── 11.1/18.4MB 3.5MB/s 5.2s<2.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 61% ━━━━━━━───── 11.3/18.4MB 1.6MB/s 5.3s<4.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 62% ━━━━━━━───── 11.4/18.4MB 413.3KB/s 5.6s<17.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 63% ━━━━━━━╸──── 11.6/18.4MB 1.7MB/s 5.8s<4.0s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 65% ━━━━━━━╸──── 12.1/18.4MB 3.7MB/s 5.9s<1.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 67% ━━━━━━━━──── 12.4/18.4MB 3.2MB/s 6.0s<1.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 69% ━━━━━━━━──── 12.7/18.4MB 2.4MB/s 6.1s<2.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 71% ━━━━━━━━──── 13.0/18.4MB 3.2MB/s 6.2s<1.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 72% ━━━━━━━━╸─── 13.2/18.4MB 2.2MB/s 6.3s<2.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 74% ━━━━━━━━╸─── 13.6/18.4MB 3.3MB/s 6.4s<1.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 75% ━━━━━━━━━─── 13.9/18.4MB 3.3MB/s 6.5s<1.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 77% ━━━━━━━━━─── 14.2/18.4MB 2.6MB/s 6.6s<1.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 78% ━━━━━━━━━─── 14.5/18.4MB 2.9MB/s 6.7s<1.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 80% ━━━━━━━━━╸── 14.8/18.4MB 2.8MB/s 6.8s<1.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 82% ━━━━━━━━━╸── 15.1/18.4MB 2.9MB/s 6.9s<1.1s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 83% ━━━━━━━━━━── 15.4/18.4MB 2.5MB/s 7.0s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 85% ━━━━━━━━━━── 15.7/18.4MB 2.9MB/s 7.1s<0.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 87% ━━━━━━━━━━── 16.0/18.4MB 2.1MB/s 7.3s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 88% ━━━━━━━━━━╸─ 16.2/18.4MB 2.4MB/s 7.4s<0.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 89% ━━━━━━━━━━╸─ 16.4/18.4MB 1.6MB/s 7.5s<1.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 89% ━━━━━━━━━━╸─ 16.4/18.4MB 379.2KB/s 7.6s<5.3s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 91% ━━━━━━━━━━╸─ 16.7/18.4MB 2.4MB/s 7.7s<0.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 92% ━━━━━━━━━━╸─ 16.9/18.4MB 1.8MB/s 7.8s<0.8s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 93% ━━━━━━━━━━━─ 17.2/18.4MB 2.9MB/s 7.9s<0.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 94% ━━━━━━━━━━━─ 17.4/18.4MB 1.8MB/s 8.0s<0.6s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 95% ━━━━━━━━━━━─ 17.4/18.4MB 348.0KB/s 8.2s<2.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 95% ━━━━━━━━━━━─ 17.5/18.4MB 350.4KB/s 8.3s<2.7s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 96% ━━━━━━━━━━━─ 17.6/18.4MB 1.5MB/s 8.5s<0.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 97% ━━━━━━━━━━━╸ 17.8/18.4MB 1.4MB/s 8.6s<0.5s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 97% ━━━━━━━━━━━╸ 17.9/18.4MB 1.1MB/s 8.7s<0.4s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 98% ━━━━━━━━━━━╸ 18.0/18.4MB 358.6KB/s 8.8s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 98% ━━━━━━━━━━━╸ 18.0/18.4MB 344.6KB/s 9.0s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 98% ━━━━━━━━━━━╸ 18.1/18.4MB 385.5KB/s 9.1s<0.9s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 98% ━━━━━━━━━━━╸ 18.1/18.4MB 277.6KB/s 9.8s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 98% ━━━━━━━━━━━╸ 18.1/18.4MB 250.7KB/s 9.9s<1.2s[KDownloading https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo11s.pt to 'yolo11s.pt': 100% ━━━━━━━━━━━━ 18.4MB 1.9MB/s 9.9s
+127.0.0.1 - - [29/May/2026 01:35:23] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:23] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:23] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:23] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:23] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:25] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:35:30] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:36:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:36:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:36:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:36:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:36:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\crossroad.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [29/May/2026 01:37:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  return self._jws.encode(
+127.0.0.1 - - [29/May/2026 01:37:22] "POST /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:29] "POST /api/detect/ambulance HTTP/1.1" 200 -
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [29/May/2026 01:37:31] "POST /api/crossroad/ambulance/east HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:34] "GET /api/crossroad/state HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:36] "POST /api/crossroad/ambulance/east/clear HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:37:38] "GET /api/crossroad/state HTTP/1.1" 200 -
+ * Detected change in 'C:\\Users\\Administrator\\smart-traffic-ai-FINAL\\smart-traffic-ai\\backend\\routes\\crossroad.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 819-857-765
+C:\Users\Administrator\AppData\Local\Programs\Python\Python313\Lib\site-packages\jwt\api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 14 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
+  decoded = self.decode_complete(
+127.0.0.1 - - [29/May/2026 01:38:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:38:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:38:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:38:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:38:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:39:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:39:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:39:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:39:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:39:20] "GET /api/analytics/trends HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:40:20] "GET /api/traffic/hourly HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:40:20] "GET /api/traffic/stats HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:40:20] "GET /api/signals/ HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:40:20] "GET /api/analytics/vehicle-breakdown HTTP/1.1" 200 -
+127.0.0.1 - - [29/May/2026 01:40:20] "GET /api/analytics/trends HTTP/1.1" 200 -

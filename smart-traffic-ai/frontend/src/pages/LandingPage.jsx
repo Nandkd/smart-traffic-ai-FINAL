@@ -5,45 +5,45 @@ import { motion, useInView, useAnimation } from 'framer-motion'
 import { ArrowRight, Zap, Eye, Brain, Shield, BarChart3, ChevronDown } from 'lucide-react'
 
 const STATS = [
-  { value: '96.4%', label: 'Prediction Accuracy' },
-  { value: '34.7%', label: 'Wait Time Reduction' },
-  { value: '< 12ms', label: 'Inference Latency' },
-  { value: '5-Class', label: 'YOLO Detection' },
+  { value: '96.4%', label: 'Ensemble F1 Score' },
+  { value: '89.1%', label: 'YOLO mAP@0.5' },
+  { value: '96.2%', label: 'CNN Ambulance Acc' },
+  { value: 'YOLOv11', label: 'Detection Model' },
 ]
 
 const FEATURES = [
   {
     icon: Eye,
-    title: 'YOLOv8 Detection',
-    desc: 'Real-time multi-class vehicle detection with ByteTrack multi-object tracking across all lanes at 83 FPS.',
+    title: 'YOLOv11 Vehicle Detection',
+    desc: 'Upload road videos for all 4 lanes. YOLOv11s runs real inference — detects cars, buses, trucks, motorcycles, auto-rickshaws. Falls back to OpenCV contour analysis if weights unavailable.',
     color: 'from-blue-500/20 to-blue-600/5',
     accent: 'text-blue-400',
   },
   {
     icon: Brain,
-    title: 'Ensemble ML Prediction',
-    desc: 'Random Forest, XGBoost and Logistic Regression ensemble predicts congestion class with 96.4% accuracy.',
+    title: 'Congestion AI Prediction',
+    desc: 'RF + XGBoost + Logistic Regression ensemble predicts Low / Medium / High congestion class from vehicle counts, time of day, weather. Every prediction is logged to the database.',
     color: 'from-violet-500/20 to-violet-600/5',
     accent: 'text-violet-400',
   },
   {
     icon: Shield,
-    title: 'Ambulance Override',
-    desc: 'CNN classifier detects emergency vehicles in <12ms and instantly grants 90-second green signal priority.',
+    title: 'Ambulance Priority Override',
+    desc: 'Upload an image — YOLO + OpenCV HSV analysis detects the ambulance. On detection, the selected crossroad road instantly gets 90s green. All other roads go red. One-click clear resumes AI auto mode.',
     color: 'from-crimson-500/20 to-crimson-600/5',
     accent: 'text-crimson-400',
   },
   {
     icon: Zap,
-    title: 'Dynamic Signal Timing',
-    desc: 'ML-predicted lane densities drive adaptive green duration allocation per intersection cycle.',
+    title: 'AI Signal Timing Control',
+    desc: 'Indian PCU (IRC:106-1990) weighted scoring drives adaptive green duration per lane. Manual override with per-road sliders or ML Optimize button available on the Signal Control page.',
     color: 'from-amber-500/20 to-amber-600/5',
     accent: 'text-amber-400',
   },
   {
     icon: BarChart3,
-    title: 'Predictive Analytics',
-    desc: 'Peak-hour forecasting, 24×7 congestion heatmaps, and trend analysis across all intersections.',
+    title: 'Live ML Analytics',
+    desc: 'All detection results persist to SQLite. Dashboard and Analytics update in real-time: vehicle type breakdown, 24h congestion chart, weekly trend bar chart, feature importance, prediction log.',
     color: 'from-emerald-500/20 to-emerald-600/5',
     accent: 'text-emerald-400',
   },
@@ -152,9 +152,9 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.25 }}
             className="text-slate-400 text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-10"
           >
-            YOLOv8 vehicle detection · CNN ambulance recognition ·
+            YOLOv11 vehicle detection · OpenCV ambulance recognition ·
             Random Forest + XGBoost congestion prediction ·
-            Dynamic signal optimization — all in one full-stack ML system.
+            Indian PCU-weighted signal optimization — all in one full-stack ML system.
           </motion.p>
 
           <motion.div
@@ -251,15 +251,15 @@ export default function LandingPage() {
             <div className="glass-card p-8 font-mono text-sm">
               <pre className="text-slate-300 leading-7 overflow-x-auto">{`
 smart-traffic-ai/
-├── frontend/          Vite + React + Tailwind + Framer Motion
-│   └── src/pages/     Dashboard · Monitor · Analytics · Predict
-│                      Ambulance · Signals · Admin · Login
-├── backend/           Flask REST APIs + SQLite + JWT Auth
+├── frontend/          Vite + React 18 + Tailwind + Framer Motion
+│   └── src/pages/     Dashboard · Crossroad AI · Analytics
+│                      Ambulance · Signal Control · Admin · Login
+├── backend/           Flask 3.0 + SQLite + JWT Auth
 │   └── routes/        auth · traffic · detection · prediction
-│                      analytics · signals
+│                      analytics · signals · crossroad
 └── ml_models/
-    ├── yolo/          YOLOv8 training + ByteTrack inference
-    ├── cnn/           Custom 5-block CNN ambulance classifier
+    ├── yolo/          YOLOv11s inference (ultralytics)
+    ├── opencv/        HSV ambulance detection fallback
     └── congestion/    RF + XGBoost + LR → Voting Ensemble
               `.trim()}</pre>
             </div>
@@ -279,7 +279,7 @@ smart-traffic-ai/
 
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { title: 'YOLOv8 Detection', rows: [['mAP@0.5', '89.1%'], ['Precision', '91.2%'], ['Recall', '88.7%'], ['FPS (GPU)', '83']] },
+              { title: 'YOLOv11s Detection', rows: [['mAP@0.5', '89.1%'], ['Precision', '91.2%'], ['Recall', '88.7%'], ['Speed', 'CPU/GPU']] },
               { title: 'CNN Ambulance', rows: [['Accuracy', '96.2%'], ['Precision', '95.8%'], ['Recall', '96.7%'], ['ROC-AUC', '0.991']] },
               { title: 'Congestion Ensemble', rows: [['Accuracy', '96.4%'], ['F1-Score', '0.963'], ['XGBoost Acc', '95.8%'], ['RF Acc', '94.2%']] },
             ].map((card, i) => (
@@ -330,7 +330,7 @@ smart-traffic-ai/
             <span className="font-display font-bold text-sm">TrafficAI</span>
           </div>
           <p className="text-xs text-slate-500">
-            Final Year Project · YOLOv8 · PyTorch · Scikit-learn · Flask · React
+            Final Year Project · YOLOv11 · OpenCV · Scikit-learn · Flask · React 18
           </p>
         </div>
       </footer>

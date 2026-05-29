@@ -33,9 +33,7 @@ export const detectionAPI = {
   detectVehicles: (formData) => api.post('/detect/vehicles', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  detectVehiclesBase64: (image) => api.post('/detect/vehicles', { image }),
   detectAmbulance: (formData) => api.post('/detect/ambulance', formData),
-  getLiveFeedStats: () => api.get('/detect/live-feed'),
 }
 
 // ── Prediction API ─────────────────────────────────────────────
@@ -61,6 +59,11 @@ export const signalsAPI = {
   update: (id, data) => api.patch(`/signals/${id}/update`, data),
   emergency: (id, lane) => api.post(`/signals/${id}/emergency`, { lane }),
   reset: (id) => api.post(`/signals/${id}/reset`),
+}
+
+// ── Crossroad API ──────────────────────────────────────────────
+export const crossroadAPI = {
+  getState: () => api.get('/crossroad/state'),
 }
 
 // ── Auth API ───────────────────────────────────────────────────

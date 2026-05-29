@@ -1,14 +1,16 @@
 // frontend/src/pages/CrossroadMonitor.jsx
-// Single Indian crossroad — 4 road panels + visual signal map
-// Real video upload per road, YOLO detection, auto signals, ambulance priority
+// Single Indian crossroad — 4-Phase signal control
+// Phase A: N+S Straight · Phase B: N+S Right Turns
+// Phase C: E+W Straight · Phase D: E+W Right Turns
+// ROI split: left 65% = straight lane, right 35% = right-turn lane
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Upload, RotateCcw, Siren, Zap, Car, Bus,
+  RotateCcw, Siren, Car, Bus,
   TruckIcon, Bike, AlertTriangle, CheckCircle,
   ChevronUp, ChevronDown, ChevronLeft, ChevronRight,
-  Film, MapPin, Settings, BarChart2, Clock
+  Film, MapPin,
 } from 'lucide-react'
 import api from '@/services/api'
 
@@ -23,14 +25,14 @@ const ROAD_META = {
 }
 
 const VEHICLE_META = {
-  car:           { icon: Car,       color: '#3B82F6', label: 'Cars'         },
-  motorcycle:    { icon: Bike,      color: '#F59E0B', label: 'Motorcycles'  },
-  auto_rickshaw: { icon: Car,       color: '#F97316', label: 'Auto Rickshaw'},
-  bus:           { icon: Bus,       color: '#8B5CF6', label: 'Buses'        },
-  truck:         { icon: TruckIcon, color: '#06B6D4', label: 'Trucks'       },
-  bicycle:       { icon: Bike,      color: '#6EE7B7', label: 'Bicycles'     },
-  pedestrian:    { icon: Car,       color: '#94A3B8', label: 'Pedestrians'  },
-  ambulance:     { icon: Siren,     color: '#EF4444', label: 'Ambulance'    },
+  car:           { icon: Car,       color: '#3B82F6', label: 'Cars'          },
+  motorcycle:    { icon: Bike,      color: '#F59E0B', label: 'Motorcycles'   },
+  auto_rickshaw: { icon: Car,       color: '#F97316', label: 'Auto Rickshaw' },
+  bus:           { icon: Bus,       color: '#8B5CF6', label: 'Buses'         },
+  truck:         { icon: TruckIcon, color: '#06B6D4', label: 'Trucks'        },
+  bicycle:       { icon: Bike,      color: '#6EE7B7', label: 'Bicycles'      },
+  pedestrian:    { icon: Car,       color: '#94A3B8', label: 'Pedestrians'   },
+  ambulance:     { icon: Siren,     color: '#EF4444', label: 'Ambulance'     },
 }
 
 const SIGNAL_GLOW = {
@@ -44,6 +46,18 @@ const DENSITY_STYLE = {
   medium:  { text: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/30' },
   high:    { text: 'text-red-400',   bg: 'bg-red-500/10',   border: 'border-red-500/30'  },
   unknown: { text: 'text-slate-400', bg: 'bg-white/3',      border: 'border-white/8'     },
+}
+
+// 4-phase definitions (mirror of backend PHASES)
+const PHASES = {
+  A: { label: 'Phase A',  movement: 'N+S Straight',    roads: ['north','south'], arrows: '↑↓', color: '#3B82F6',
+       desc: 'North & South straight lanes move simultaneously. East & West stopped.' },
+  B: { label: 'Phase B',  movement: 'N+S Right Turns', roads: ['north','south'], arrows: '↗↙', color: '#8B5CF6',
+       desc: 'North & South dedicated right-turn arrow. Prevents head-on collisions.' },
+  C: { label: 'Phase C',  movement: 'E+W Straight',    roads: ['east','west'],   arrows: '→←', color: '#F59E0B',
+       desc: 'East & West straight lanes move simultaneously. North & South stopped.' },
+  D: { label: 'Phase D',  movement: 'E+W Right Turns', roads: ['east','west'],   arrows: '↘↖', color: '#22C55E',
+       desc: 'East & West dedicated right-turn arrow. Prevents head-on collisions.'  },
 }
 
 const ALLOWED = ['.mp4','.avi','.mov','.mkv','.webm','.wmv']
@@ -66,23 +80,94 @@ function TrafficLight({ phase, size = 'md' }) {
   )
 }
 
+// ── Phase Indicator ───────────────────────────────────────────
+function PhaseIndicator({ currentPhase, phaseScores, signalMode }) {
+  if (!currentPhase || signalMode === 'emergency' || signalMode === 'idle') return null
+  const ph = PHASES[currentPhase]
+  if (!ph) return null
+
+  const maxScore = Math.max(...Object.values(phaseScores || {}), 1)
+
+  return (
+    <motion.div
+      key={currentPhase}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="rounded-xl border p-3 space-y-2"
+      style={{ borderColor: ph.color + '40', backgroundColor: ph.color + '0d' }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl font-mono font-black" style={{ color: ph.color }}>
+            {ph.arrows}
+          </span>
+          <div>
+            <p className="text-sm font-bold text-white">{ph.label}</p>
+            <p className="text-xs font-mono" style={{ color: ph.color }}>{ph.movement}</p>
+          </div>
+        </div>
+        <div className="flex gap-1">
+          {ph.roads.map(r => (
+            <span key={r} className="text-xs font-mono px-1.5 py-0.5 rounded-md bg-white/8 text-white capitalize">
+              {r}
+            </span>
+          ))}
+        </div>
+      </div>
+      <p className="text-xs text-slate-400 leading-relaxed">{ph.desc}</p>
+
+      {/* Phase score bars */}
+      {phaseScores && (
+        <div className="space-y-1 pt-1 border-t border-white/8">
+          <p className="text-xs text-slate-500 font-mono">PHASE SCORES (PCU)</p>
+          {Object.entries(PHASES).map(([key, p]) => {
+            const score = phaseScores[key] || 0
+            const pct   = maxScore > 0 ? (score / maxScore) * 100 : 0
+            const isActive = key === currentPhase
+            return (
+              <div key={key} className="flex items-center gap-2">
+                <span className={`text-xs font-mono w-6 font-bold ${isActive ? 'text-white' : 'text-slate-500'}`}>
+                  {key}
+                </span>
+                <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.6 }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: isActive ? p.color : p.color + '60' }}
+                  />
+                </div>
+                <span className={`text-xs font-mono w-8 text-right ${isActive ? 'text-white' : 'text-slate-500'}`}>
+                  {score}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </motion.div>
+  )
+}
+
 // ── Central Crossroad Visual ──────────────────────────────────
-function CrossroadVisual({ roads, activeRoad, emergencyRoad, signalMode }) {
+function CrossroadVisual({ roads, currentPhase, emergencyRoad, signalMode }) {
+  const activeRoads = currentPhase ? (PHASES[currentPhase]?.roads || []) : []
+
   return (
     <div className="relative w-full aspect-square max-w-[320px] mx-auto select-none">
 
       {/* Road strips */}
-      {/* Horizontal road (East-West) */}
-      <div className="absolute inset-y-[38%] inset-x-0 bg-slate-700/60
-                      border-y border-white/10" />
-      {/* Vertical road (North-South) */}
-      <div className="absolute inset-x-[38%] inset-y-0 bg-slate-700/60
-                      border-x border-white/10" />
+      <div className="absolute inset-y-[38%] inset-x-0 bg-slate-700/60 border-y border-white/10" />
+      <div className="absolute inset-x-[38%] inset-y-0 bg-slate-700/60 border-x border-white/10" />
 
       {/* Center box */}
       <div className="absolute inset-[38%] bg-slate-600/80 border border-white/15
                       flex items-center justify-center z-10">
-        <div className="w-3 h-3 rounded-full bg-white/20" />
+        {currentPhase && signalMode !== 'emergency' ? (
+          <span className="text-xs font-black text-white font-mono">{currentPhase}</span>
+        ) : (
+          <div className="w-3 h-3 rounded-full bg-white/20" />
+        )}
       </div>
 
       {/* Lane markings */}
@@ -97,10 +182,10 @@ function CrossroadVisual({ roads, activeRoad, emergencyRoad, signalMode }) {
 
       {/* Per-road signal + label */}
       {ROADS.map(road => {
-        const meta    = ROAD_META[road]
-        const state   = roads[road]
-        const phase   = state?.signal || 'red'
-        const isActive = road === activeRoad
+        const meta     = ROAD_META[road]
+        const state    = roads[road]
+        const phase    = state?.signal || 'red'
+        const isActive = activeRoads.includes(road)
         const isEmerg  = road === emergencyRoad
         const vc       = state?.total_vehicles || 0
 
@@ -112,17 +197,14 @@ function CrossroadVisual({ roads, activeRoad, emergencyRoad, signalMode }) {
         }[meta.position]
 
         return (
-          <div key={road}
-            className={`absolute flex gap-2 z-20 ${posClass}`}>
+          <div key={road} className={`absolute flex gap-2 z-20 ${posClass}`}>
             <TrafficLight phase={phase} size="sm" />
             <div className="text-center">
               <p className="text-xs font-mono font-bold"
                 style={{ color: isEmerg ? '#EF4444' : isActive ? '#22C55E' : '#64748b' }}>
                 {road.toUpperCase()}
               </p>
-              {vc > 0 && (
-                <p className="text-xs font-bold text-white">{vc}</p>
-              )}
+              {vc > 0 && <p className="text-xs font-bold text-white">{vc}</p>}
             </div>
           </div>
         )
@@ -155,7 +237,7 @@ function CrossroadVisual({ roads, activeRoad, emergencyRoad, signalMode }) {
 }
 
 // ── Frame Timeline ────────────────────────────────────────────
-function Timeline({ frames, color }) {
+function Timeline({ frames }) {
   if (!frames?.length) return null
   const max = Math.max(...frames.map(f => f.total_vehicles), 1)
   return (
@@ -176,11 +258,11 @@ function Timeline({ frames, color }) {
 
 // ── Road Panel ────────────────────────────────────────────────
 function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onOverride, onReset }) {
-  const [model, setModel]         = useState('yolov8s')
-  const [drag, setDrag]           = useState(false)
-  const [showOverride, setOver]   = useState(false)
-  const [overDur, setOverDur]     = useState(30)
-  const [frames, setFrames]       = useState([])
+  const [model, setModel]       = useState('yolov8s')
+  const [drag, setDrag]         = useState(false)
+  const [showOverride, setOver] = useState(false)
+  const [overDur, setOverDur]   = useState(30)
+  const [frames, setFrames]     = useState([])
   const fileRef = useRef(null)
   const meta    = ROAD_META[road]
   const Icon    = meta.icon
@@ -210,7 +292,7 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
 
   return (
     <div className={`glass-card flex flex-col gap-3 p-4 border transition-all duration-500 ${
-      isEmerg      ? 'border-red-500/50 bg-red-500/5'
+      isEmerg       ? 'border-red-500/50 bg-red-500/5'
       : phase === 'green' ? 'border-green-500/30 bg-green-500/3'
       : 'border-white/8'
     }`}>
@@ -279,7 +361,6 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
       {/* IDLE — show upload */}
       {status === 'idle' && (
         <div className="space-y-3">
-          {/* Model selector */}
           <div>
             <p className="text-xs font-mono text-slate-500 mb-1.5">YOLO MODEL</p>
             <select
@@ -291,29 +372,31 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
               <optgroup label="── YOLOv11 (Latest)">
                 {['yolov11n','yolov11s','yolov11m'].map(k => (
                   <option key={k} value={k}>
-                    {models[k]?.name || k} — {models[k]?.speed} · {models[k]?.map}% mAP
+                    {models[k]
+                      ? `${models[k].name} — ${models[k].speed} · ${models[k].map}% mAP`
+                      : k}
                   </option>
                 ))}
               </optgroup>
               <optgroup label="── YOLOv8 ✅ Recommended">
                 {['yolov8n','yolov8s','yolov8m','yolov8l'].map(k => (
                   <option key={k} value={k}>
-                    {models[k]?.name || k} — {models[k]?.speed} · {models[k]?.map}% mAP
-                    {models[k]?.rec ? ' ★' : ''}
+                    {models[k]
+                      ? `${models[k].name} — ${models[k].speed} · ${models[k].map}% mAP${models[k].rec ? ' ★' : ''}`
+                      : k}
                   </option>
                 ))}
               </optgroup>
               <optgroup label="── YOLOv9 / v10">
                 {['yolov9c','yolov10s'].map(k => (
                   <option key={k} value={k}>
-                    {models[k]?.name || k} — {models[k]?.speed}
+                    {models[k] ? `${models[k].name} — ${models[k].speed}` : k}
                   </option>
                 ))}
               </optgroup>
             </select>
           </div>
 
-          {/* Drop zone */}
           <div
             className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer
                         transition-all duration-200 ${
@@ -331,16 +414,9 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
             <Film className={`w-8 h-8 mx-auto mb-2 transition-colors ${
               drag ? 'text-crimson-400' : 'text-slate-600'
             }`} />
-            <p className="text-sm font-medium text-white mb-1">
-              Drop {meta.label} video
-            </p>
+            <p className="text-sm font-medium text-white mb-1">Drop {meta.label} video</p>
             <p className="text-xs text-slate-500">MP4 · AVI · MOV · MKV</p>
           </div>
-
-          <p className="text-xs text-slate-600 text-center leading-relaxed">
-            Upload CCTV / dashcam video from the {meta.label.toLowerCase()} direction.
-            AI will detect all Indian vehicles and update signals.
-          </p>
         </div>
       )}
 
@@ -362,20 +438,23 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
               />
             </div>
           </div>
-          <p className="text-xs text-slate-500 text-center">
-            {state?.filename} · {state?.video_info?.duration_sec}s ·
-            {models[state?.model_used]?.name}
-          </p>
           {state?.current_frame && (
             <div className="p-2.5 bg-white/3 rounded-xl border border-white/5">
               <p className="text-xs text-slate-500 font-mono mb-1.5">LATEST FRAME</p>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {Object.entries(state.current_frame.vehicle_counts || {}).map(([cls, cnt]) => (
                   <span key={cls} className="text-xs font-mono text-white">
                     <span className="text-slate-400">{cls}:</span> {cnt}
                   </span>
                 ))}
               </div>
+              {/* ROI split preview */}
+              {(state.current_frame.straight_count > 0 || state.current_frame.right_count > 0) && (
+                <div className="flex gap-2 text-xs font-mono">
+                  <span className="text-blue-400">↑ Straight: {state.current_frame.straight_count} ({state.current_frame.straight_pcu} PCU)</span>
+                  <span className="text-amber-400">↗ Right: {state.current_frame.right_count} ({state.current_frame.right_pcu} PCU)</span>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -393,7 +472,7 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
         </div>
       )}
 
-      {/* COMPLETED + live frame preview */}
+      {/* COMPLETED */}
       {(status === 'completed' || (status === 'processing' && state?.current_frame)) && (
         <div className="space-y-3">
           {/* Vehicle type breakdown */}
@@ -401,14 +480,13 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
             <p className="text-xs text-slate-500 font-mono mb-2">DETECTED VEHICLES (avg/frame)</p>
             <div className="grid grid-cols-2 gap-1.5">
               {Object.entries(state?.vehicle_counts || {}).map(([cls, cnt]) => {
-                const vm = VEHICLE_META[cls] || VEHICLE_META.car
+                const vm   = VEHICLE_META[cls] || VEHICLE_META.car
                 const VIcon = vm.icon
                 return (
                   <div key={cls}
                     className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg
                                bg-white/3 border border-white/5">
-                    <VIcon className="w-3.5 h-3.5 flex-shrink-0"
-                      style={{ color: vm.color }} />
+                    <VIcon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: vm.color }} />
                     <span className="text-xs text-slate-300 capitalize truncate flex-1">
                       {cls.replace('_',' ')}
                     </span>
@@ -418,6 +496,38 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
               })}
             </div>
           </div>
+
+          {/* ROI lane split */}
+          {(state?.straight_count > 0 || state?.right_count > 0) && (
+            <div className="p-2.5 bg-white/3 rounded-xl border border-white/5">
+              <p className="text-xs text-slate-500 font-mono mb-2">LANE SPLIT (auto 65/35 ROI)</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="text-center">
+                  <p className="text-sm font-bold text-blue-400">{state.straight_count}</p>
+                  <p className="text-xs text-slate-500">↑ Straight</p>
+                  <p className="text-xs font-mono text-blue-300">{state.straight_pcu} PCU</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-bold text-amber-400">{state.right_count}</p>
+                  <p className="text-xs text-slate-500">↗ Right Turn</p>
+                  <p className="text-xs font-mono text-amber-300">{state.right_pcu} PCU</p>
+                </div>
+              </div>
+              {/* Visual bar */}
+              <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden flex">
+                {(() => {
+                  const total = (state.straight_count || 0) + (state.right_count || 0)
+                  const pct   = total > 0 ? ((state.straight_count || 0) / total) * 100 : 65
+                  return (
+                    <>
+                      <div className="h-full bg-blue-500/70 transition-all" style={{ width: `${pct}%` }} />
+                      <div className="h-full bg-amber-500/70 flex-1" />
+                    </>
+                  )
+                })()}
+              </div>
+            </div>
+          )}
 
           {/* PCU + green time */}
           <div className="grid grid-cols-3 gap-2 text-center">
@@ -447,7 +557,7 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
               <p className="text-xs text-slate-500 font-mono mb-1">
                 TRAFFIC TIMELINE — {frames.length} frames
               </p>
-              <Timeline frames={frames} color={meta.color} />
+              <Timeline frames={frames} />
             </div>
           )}
 
@@ -465,8 +575,7 @@ function RoadPanel({ road, state, models, onUpload, onAmbulance, onClearAmb, onO
 
       {/* Signal info */}
       {phase === 'green' && state?.green_duration > 0 && (
-        <div className="flex items-center gap-2 p-2 bg-green-500/8 rounded-xl
-                        border border-green-500/20">
+        <div className="flex items-center gap-2 p-2 bg-green-500/8 rounded-xl border border-green-500/20">
           <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
           <p className="text-xs text-green-300 font-mono">
             GREEN — {state.green_duration}s · {state.total_vehicles} vehicles waiting
@@ -612,15 +721,18 @@ export default function CrossroadMonitor() {
     } catch (err) { console.error(err) }
   }
 
-  const roads      = crossroad?.roads || {}
-  const activeRoad = crossroad?.active_road
-  const signalMode = crossroad?.signal_mode || 'idle'
-  const anyEmerg   = Object.values(roads).some(r => r?.ambulance_detected)
-  const anyActive  = Object.values(roads).some(r => r?.status !== 'idle')
+  const roads        = crossroad?.roads || {}
+  const signalMode   = crossroad?.signal_mode || 'idle'
+  const currentPhase = crossroad?.current_phase
+  const phaseScores  = crossroad?.phase_scores
+  const anyEmerg     = Object.values(roads).some(r => r?.ambulance_detected)
+  const anyActive    = Object.values(roads).some(r => r?.status !== 'idle')
 
-  // Summary stats
   const totalVehicles = Object.values(roads).reduce((a, r) => a + (r?.total_vehicles || 0), 0)
   const roadsUploaded = Object.values(roads).filter(r => r?.status !== 'idle').length
+
+  // Which roads are currently green (may be 2 simultaneously in a phase)
+  const greenRoads = ROADS.filter(r => roads[r]?.signal === 'green')
 
   return (
     <div className="p-4 space-y-5 max-w-[1400px] mx-auto">
@@ -631,7 +743,6 @@ export default function CrossroadMonitor() {
           <h1 className="font-display font-bold text-2xl text-white">
             Indian Crossroad Controller
           </h1>
-          {/* Location */}
           <div className="flex items-center gap-2 mt-1">
             <MapPin className="w-3.5 h-3.5 text-slate-500" />
             {editLoc ? (
@@ -657,12 +768,10 @@ export default function CrossroadMonitor() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleResetAll}
-            className="btn-ghost py-2 px-4 text-sm flex items-center gap-2">
-            <RotateCcw className="w-3.5 h-3.5" /> Reset All
-          </button>
-        </div>
+        <button onClick={handleResetAll}
+          className="btn-ghost py-2 px-4 text-sm flex items-center gap-2">
+          <RotateCcw className="w-3.5 h-3.5" /> Reset All
+        </button>
       </div>
 
       {/* Emergency banner */}
@@ -672,8 +781,7 @@ export default function CrossroadMonitor() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-3 p-3 rounded-xl
-                       bg-red-600/15 border border-red-500/30"
+            className="flex items-center gap-3 p-3 rounded-xl bg-red-600/15 border border-red-500/30"
           >
             <Siren className="w-5 h-5 text-red-400 animate-pulse flex-shrink-0" />
             <div>
@@ -681,14 +789,14 @@ export default function CrossroadMonitor() {
                 🚨 AMBULANCE PRIORITY — {crossroad?.emergency_road?.toUpperCase()} ROAD CLEARED
               </p>
               <p className="text-xs text-red-400/70 mt-0.5">
-                90 seconds green · All other roads 0s · System in emergency mode
+                90 seconds green · All phases suspended · 4-phase resumes after clearance
               </p>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Main layout — crossroad visual + 4 panels */}
+      {/* Main layout */}
       <div className="grid lg:grid-cols-3 gap-5">
 
         {/* Left col — North + West */}
@@ -703,35 +811,59 @@ export default function CrossroadMonitor() {
             onReset={handleReset} />
         </div>
 
-        {/* Center — crossroad visual + stats */}
+        {/* Center — crossroad visual + phase info + stats */}
         <div className="flex flex-col gap-5">
-          {/* Crossroad diagram */}
           <div className="glass-card p-6 flex flex-col items-center gap-8">
             <CrossroadVisual
               roads={roads}
-              activeRoad={activeRoad}
+              currentPhase={currentPhase}
               emergencyRoad={crossroad?.emergency_road}
               signalMode={signalMode}
             />
 
-            {/* Active road indicator */}
-            {activeRoad && (
-              <div className="text-center">
+            {/* Active phase / green status */}
+            {greenRoads.length > 0 && !anyEmerg && (
+              <div className="text-center w-full">
                 <p className="text-xs text-slate-500 font-mono mb-1">ACTIVE GREEN</p>
-                <div className="flex items-center gap-2 justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
-                  <span className="font-display font-bold text-lg text-green-400">
-                    {ROAD_META[activeRoad]?.label}
-                  </span>
+                <div className="flex items-center gap-2 justify-center flex-wrap">
+                  {greenRoads.map(r => (
+                    <div key={r} className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse" />
+                      <span className="font-display font-bold text-lg text-green-400 capitalize">
+                        {r}
+                      </span>
+                    </div>
+                  ))}
                 </div>
                 <p className="text-xs text-slate-400 mt-1">
-                  {roads[activeRoad]?.total_vehicles || 0} vehicles ·
-                  PCU {roads[activeRoad]?.pcu_count || 0} ·
-                  {roads[activeRoad]?.green_duration || 0}s green
+                  {greenRoads.map(r => `${roads[r]?.total_vehicles || 0} vehicles`).join(' + ')} ·
+                  PCU {greenRoads.map(r => roads[r]?.pcu_count || 0).reduce((a, b) => a + b, 0).toFixed(1)}
+                  {currentPhase && ` · ${PHASES[currentPhase]?.movement}`}
                 </p>
               </div>
             )}
+
+            {anyEmerg && crossroad?.emergency_road && (
+              <div className="text-center">
+                <p className="text-xs text-slate-500 font-mono mb-1">EMERGENCY — ACTIVE GREEN</p>
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-400 animate-pulse" />
+                  <span className="font-display font-bold text-lg text-red-400 capitalize">
+                    {crossroad.emergency_road} Road — 90s
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
+
+          {/* Phase indicator */}
+          {anyActive && (
+            <PhaseIndicator
+              currentPhase={currentPhase}
+              phaseScores={phaseScores}
+              signalMode={signalMode}
+            />
+          )}
 
           {/* Summary stats */}
           {anyActive && (
@@ -739,10 +871,11 @@ export default function CrossroadMonitor() {
               <p className="text-xs font-mono text-slate-500 uppercase">Crossroad Summary</p>
               <div className="grid grid-cols-2 gap-3">
                 {[
-                  { label: 'Total Vehicles',   value: totalVehicles,      color: 'text-blue-400' },
-                  { label: 'Roads Uploaded',   value: `${roadsUploaded}/4`, color: 'text-green-400' },
-                  { label: 'Signal Cycles',    value: crossroad?.cycle_count || 0, color: 'text-amber-400' },
-                  { label: 'Mode',             value: signalMode.toUpperCase(), color: signalMode === 'emergency' ? 'text-red-400' : 'text-violet-400' },
+                  { label: 'Total Vehicles',  value: totalVehicles,       color: 'text-blue-400'   },
+                  { label: 'Roads Uploaded',  value: `${roadsUploaded}/4`, color: 'text-green-400'  },
+                  { label: 'Signal Cycles',   value: crossroad?.cycle_count || 0, color: 'text-amber-400' },
+                  { label: 'Mode',            value: signalMode.toUpperCase(),
+                    color: signalMode === 'emergency' ? 'text-red-400' : 'text-violet-400' },
                 ].map(item => (
                   <div key={item.label} className="p-2.5 bg-white/3 rounded-xl border border-white/5 text-center">
                     <p className={`font-display font-bold text-lg ${item.color}`}>{item.value}</p>
@@ -755,10 +888,10 @@ export default function CrossroadMonitor() {
               <div>
                 <p className="text-xs font-mono text-slate-500 mb-2">ROAD PCU COMPARISON</p>
                 {ROADS.map(road => {
-                  const pcu   = roads[road]?.pcu_count || 0
+                  const pcu    = roads[road]?.pcu_count || 0
                   const maxPcu = Math.max(...ROADS.map(r => roads[r]?.pcu_count || 0), 1)
-                  const pct   = maxPcu > 0 ? (pcu / maxPcu) * 100 : 0
-                  const isGreen = road === activeRoad
+                  const pct    = maxPcu > 0 ? (pcu / maxPcu) * 100 : 0
+                  const isGreen = roads[road]?.signal === 'green'
                   return (
                     <div key={road} className="flex items-center gap-2 mb-1.5">
                       <span className="text-xs font-mono text-slate-400 w-10 capitalize">{road}</span>
@@ -781,27 +914,23 @@ export default function CrossroadMonitor() {
           {/* How it works — only when idle */}
           {!anyActive && (
             <div className="glass-card p-4 space-y-3">
-              <p className="text-xs font-mono text-slate-500 uppercase">How To Use</p>
+              <p className="text-xs font-mono text-slate-500 uppercase">4-Phase Signal System</p>
               <div className="space-y-2 text-xs text-slate-400">
-                {[
-                  { n:'1', t:'Set Location', d:'Click the location text above to name your crossroad.' },
-                  { n:'2', t:'Upload Videos', d:'Drop a CCTV/dashcam video on each road panel. You can upload 1, 2, 3, or all 4 roads.' },
-                  { n:'3', t:'AI Detection', d:'YOLO detects cars, bikes, autos, buses, trucks, pedestrians and ambulances.' },
-                  { n:'4', t:'Auto Signals', d:'The road with most traffic (highest PCU score) gets the green signal automatically.' },
-                  { n:'5', t:'Ambulance', d:'If ambulance detected in video or triggered manually → 90s green, all others 0s.' },
-                ].map(item => (
-                  <div key={item.n} className="flex gap-2.5">
-                    <span className="font-mono text-crimson-500 font-bold flex-shrink-0">{item.n}.</span>
+                {Object.entries(PHASES).map(([key, ph]) => (
+                  <div key={key} className="flex gap-2.5">
+                    <span className="font-mono font-black text-lg leading-none flex-shrink-0"
+                      style={{ color: ph.color }}>{ph.arrows}</span>
                     <div>
-                      <p className="font-medium text-white">{item.t}</p>
-                      <p className="leading-relaxed mt-0.5">{item.d}</p>
+                      <p className="font-medium text-white">{ph.label} — {ph.movement}</p>
+                      <p className="leading-relaxed mt-0.5">{ph.desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
               <div className="p-2.5 bg-white/3 rounded-xl border border-white/5 font-mono text-xs text-slate-500">
-                <p className="text-slate-300 mb-1">PCU (Passenger Car Unit) — Indian Roads Congress</p>
-                <p>Car=1.0 · Auto=0.8 · Bike=0.5 · Bus=2.5 · Truck=2.0 · Ambulance=10.0 (priority)</p>
+                <p className="text-slate-300 mb-1">ROI Lane Split — auto 65/35</p>
+                <p>Left 65% of frame = straight lane · Right 35% = right-turn lane</p>
+                <p className="mt-1">Phase with highest combined PCU score gets green automatically</p>
               </div>
             </div>
           )}
@@ -819,6 +948,7 @@ export default function CrossroadMonitor() {
             onReset={handleReset} />
         </div>
       </div>
+
     </div>
   )
 }

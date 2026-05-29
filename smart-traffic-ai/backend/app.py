@@ -71,10 +71,8 @@ def create_app():
 
 
 def seed_data():
-    import random
-    from datetime import datetime, timedelta
     from backend.models.user import User
-    from backend.models.traffic_record import TrafficRecord, TrafficSignal
+    from backend.models.traffic_record import TrafficSignal
 
     if not User.query.filter_by(username="admin").first():
         admin = User(username="admin", email="admin@trafficai.io", role="admin")
@@ -97,25 +95,7 @@ def seed_data():
             ))
         db.session.commit()
 
-    if TrafficRecord.query.count() == 0:
-        now = datetime.utcnow()
-        for day in range(7):
-            for hour in range(24):
-                is_peak = hour in (7, 8, 9, 17, 18, 19, 20)
-                count   = random.randint(80, 180) if is_peak else random.randint(5, 45)
-                density = "high" if count > 80 else ("medium" if count > 30 else "low")
-                db.session.add(TrafficRecord(
-                    timestamp=now - timedelta(days=day, hours=hour),
-                    intersection_id=random.randint(1, 4),
-                    vehicle_count=count,
-                    vehicle_type=random.choice(["car","bus","truck","motorcycle"]),
-                    density_class=density,
-                    congestion_score=round(random.uniform(0.1, 0.9), 3),
-                    ambulance_detected=random.random() < 0.02,
-                    lane="north",
-                ))
-        db.session.commit()
-        print("Demo data seeded")
+    # No fake traffic records — charts show real data only after video uploads
 
 
 if __name__ == "__main__":

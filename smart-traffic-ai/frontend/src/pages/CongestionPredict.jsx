@@ -8,11 +8,11 @@ import { predictionAPI } from '@/services/api'
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
 
 const defaultForm = {
-  vehicle_count: 65,
-  car_count: 35,
-  bus_count: 8,
-  truck_count: 6,
-  motorcycle_count: 16,
+  vehicle_count: 0,
+  car_count: 0,
+  bus_count: 0,
+  truck_count: 0,
+  motorcycle_count: 0,
   hour: new Date().getHours(),
   day_of_week: new Date().getDay(),
   rain_intensity: 0,

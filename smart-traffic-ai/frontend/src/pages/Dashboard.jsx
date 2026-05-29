@@ -9,7 +9,7 @@ import {
   Car, Bus, TruckIcon, Bike, Siren, Activity,
   TrendingUp, TrendingDown, Signal, Clock, AlertTriangle
 } from 'lucide-react'
-import { trafficAPI, analyticsAPI, signalsAPI } from '@/services/api'
+import { trafficAPI, analyticsAPI, crossroadAPI } from '@/services/api'
 
 // ── Reusable stat card ──────────────────────────────────────────
 function StatCard({ icon: Icon, label, value, subtext, trend, color = 'blue', delay = 0 }) {
@@ -72,23 +72,23 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function Dashboard() {
   const [stats, setStats] = useState(null)
   const [hourly, setHourly] = useState([])
-  const [signals, setSignals] = useState([])
+  const [crossroad, setCrossroad] = useState(null)
   const [breakdown, setBreakdown] = useState([])
   const [trends, setTrends] = useState([])
   const [loading, setLoading] = useState(true)
 
   const fetchAll = useCallback(async () => {
     try {
-      const [statsRes, hourlyRes, signalsRes, breakdownRes, trendsRes] = await Promise.all([
+      const [statsRes, hourlyRes, crossroadRes, breakdownRes, trendsRes] = await Promise.all([
         trafficAPI.getStats(),
         trafficAPI.getHourly(),
-        signalsAPI.getAll(),
+        crossroadAPI.getState(),
         analyticsAPI.getVehicleBreakdown(),
         analyticsAPI.getWeeklyTrends(),
       ])
       setStats(statsRes.data)
       setHourly(hourlyRes.data.hourly || [])
-      setSignals(signalsRes.data.signals || [])
+      setCrossroad(crossroadRes.data)
       setBreakdown(breakdownRes.data.breakdown || [])
       setTrends(trendsRes.data.trends || [])
     } catch (err) {
@@ -206,27 +206,83 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
 
-        {/* Signal status grid */}
+        {/* Crossroad AI Signal Status */}
         <div className="glass-card p-5">
-          <h3 className="font-display font-semibold text-sm text-white mb-4">Signal Status</h3>
-          <div className="space-y-3">
-            {signals.map(sig => (
-              <div key={sig.id} className="flex items-center justify-between p-3 bg-white/3 rounded-xl border border-white/6">
-                <div>
-                  <p className="text-sm font-medium text-white">{sig.location_name}</p>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5">
-                    N:{sig.timings.north}s · S:{sig.timings.south}s · E:{sig.timings.east}s · W:{sig.timings.west}s
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {sig.status === 'emergency'
-                    ? <span className="badge-emergency">EMERGENCY</span>
-                    : <span className="badge-low">ACTIVE</span>
-                  }
-                </div>
-              </div>
-            ))}
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-display font-semibold text-sm text-white">Crossroad AI — Signal Status</h3>
+            <div className="flex items-center gap-2">
+              {crossroad?.current_phase && crossroad.signal_mode !== 'emergency' && (
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full border text-blue-400 bg-blue-500/10 border-blue-500/20">
+                  Phase {crossroad.current_phase}
+                </span>
+              )}
+              {crossroad && (
+                <span className={`text-xs font-mono px-2 py-0.5 rounded-full border ${
+                  crossroad.signal_mode === 'emergency'
+                    ? 'text-red-400 bg-red-500/10 border-red-500/20'
+                    : crossroad.signal_mode === 'auto'
+                    ? 'text-green-400 bg-green-500/10 border-green-500/20'
+                    : 'text-slate-400 bg-white/5 border-white/10'
+                }`}>
+                  {(crossroad.signal_mode || 'IDLE').toUpperCase()}
+                </span>
+              )}
+            </div>
           </div>
+
+          {(() => {
+            const roads = crossroad?.roads || {}
+            const active = Object.entries(roads).filter(([, s]) => s.status !== 'idle')
+            if (active.length === 0) return (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <Signal className="w-8 h-8 text-slate-700 mb-2" />
+                <p className="text-sm text-slate-500">No videos uploaded yet</p>
+                <p className="text-xs text-slate-600 mt-1">Upload videos on Crossroad AI page to activate signal control</p>
+              </div>
+            )
+            return (
+              <div className="space-y-2">
+                {['north','south','east','west'].map(road => {
+                  const s = roads[road]
+                  if (!s || s.status === 'idle') return null
+                  const isGreen = s.signal === 'green'
+                  return (
+                    <div key={road} className={`flex items-center justify-between p-3 rounded-xl border transition-colors ${
+                      isGreen ? 'bg-green-500/5 border-green-500/25' : 'bg-white/3 border-white/6'
+                    }`}>
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                          isGreen ? 'bg-green-400 animate-pulse' : 'bg-red-500'
+                        }`} />
+                        <div>
+                          <p className="text-sm font-medium text-white capitalize">{road} Road</p>
+                          <p className="text-xs text-slate-500 font-mono">
+                            {s.avg_vehicles ?? s.total_vehicles ?? 0} vehicles · PCU {(s.pcu_count || 0).toFixed(1)}
+                          </p>
+                          {(s.straight_count > 0 || s.right_count > 0) && (
+                            <p className="text-xs text-slate-600 font-mono">
+                              ↑{s.straight_count} straight · ↗{s.right_count} right
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-sm font-mono font-bold ${isGreen ? 'text-green-400' : 'text-slate-500'}`}>
+                          {isGreen ? `${s.green_duration}s GREEN` : 'RED'}
+                        </p>
+                        <p className="text-xs text-slate-600 font-mono capitalize">{s.density_class || '—'}</p>
+                      </div>
+                    </div>
+                  )
+                })}
+                {crossroad.cycle_count > 0 && (
+                  <p className="text-xs text-slate-600 font-mono pt-1">
+                    {crossroad.cycle_count} AI signal cycle{crossroad.cycle_count !== 1 ? 's' : ''} completed
+                  </p>
+                )}
+              </div>
+            )
+          })()}
         </div>
       </div>
 

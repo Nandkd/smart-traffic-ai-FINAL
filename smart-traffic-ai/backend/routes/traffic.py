@@ -1,12 +1,11 @@
 """backend/routes/traffic.py — Traffic data CRUD & stats endpoints."""
 
-import random
 from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from sqlalchemy import func, desc
 
-from backend.app import db
+from backend.database import db
 from backend.models.traffic_record import TrafficRecord, TrafficSignal
 
 traffic_bp = Blueprint("traffic", __name__)
@@ -83,7 +82,6 @@ def get_stats():
         "emergency_signals": emergency_signals,
         "density_distribution": density_dist,
         "avg_congestion_score": round(float(avg_cong), 3),
-        "system_uptime_pct": 99.4,
     }), 200
 
 
