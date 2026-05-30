@@ -132,51 +132,104 @@ smart-traffic-ai/
 ## ⚡ Installation
 
 ### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- CUDA 11.8+ (optional, for GPU)
+- Python 3.10+ — https://python.org
+- Node.js 18+ — https://nodejs.org
+- Git
+- CUDA 11.8+ (optional, for GPU acceleration)
 
-### Backend Setup
+### 1. Clone the repository
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python app.py
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>/smart-traffic-ai
 ```
 
-### Frontend Setup
+### 2. Set up the Python backend
+
+```bash
+# Create and activate a virtual environment (recommended)
+python -m venv venv
+
+# Windows (Command Prompt):
+venv\Scripts\activate
+# Windows (PowerShell):
+venv\Scripts\Activate.ps1
+# Mac / Linux:
+source venv/bin/activate
+
+# Install all Python dependencies
+pip install -r requirements.txt
+```
+
+> **Note:** Dependencies include PyTorch, TensorFlow, and OpenCV. Expect a 5–10 GB download and several minutes to install.
+
+### 3. Set up the frontend
+
 ```bash
 cd frontend
 npm install
-npm run dev
-```
-
-### ML Models Setup
-```bash
-cd ml_models
-pip install ultralytics torch torchvision scikit-learn xgboost
+cd ..
 ```
 
 ---
 
-## 🚀 Running the Project
+## Running the Project
 
-```bash
-# Terminal 1 — Backend
-cd backend && python app.py
+Open **two separate terminals**, both from inside the `smart-traffic-ai/` folder.
 
-# Terminal 2 — Frontend
-cd frontend && npm run dev
+### Terminal 1 — Backend (Flask)
 
-# Terminal 3 — Run ML Training (optional)
-cd ml_models/congestion && python train_models.py
+**Windows (Command Prompt):**
+```cmd
+set FLASK_APP=backend.app
+set FLASK_ENV=development
+set PYTHONUTF8=1
+python -m flask run --host=0.0.0.0 --port=5000 --debug
 ```
 
-Access:
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000
-- API Docs: http://localhost:5000/api/docs
+**Windows (PowerShell):**
+```powershell
+$env:FLASK_APP = "backend.app"
+$env:FLASK_ENV = "development"
+$env:PYTHONUTF8 = "1"
+python -m flask run --host=0.0.0.0 --port=5000 --debug
+```
+
+**Mac / Linux:**
+```bash
+FLASK_APP=backend.app FLASK_ENV=development python -m flask run --host=0.0.0.0 --port=5000 --debug
+```
+
+### Terminal 2 — Frontend (Vite)
+
+```bash
+cd frontend
+npm run dev
+```
+
+### Access the app
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:5000 |
+| Health check | http://localhost:5000/api/health |
+
+**Default login credentials:** `admin` / `admin123`
+
+### Optional — Run ML Training
+
+```bash
+# Generate synthetic dataset + train congestion models
+python -m ml_models.congestion.train_models --generate-synthetic
+
+# Train YOLOv8 (requires labelled dataset in datasets/)
+python ml_models/yolo/train.py
+
+# Train CNN ambulance classifier
+python ml_models/cnn/train.py
+```
+
+> **Note:** `run.py` in the project root does not work on Windows due to emoji encoding and npm path issues. Use the manual commands above instead.
 
 ---
 
