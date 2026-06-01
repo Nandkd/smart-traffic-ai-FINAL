@@ -100,7 +100,7 @@ export default function LandingPage() {
             <span className="font-display font-bold text-base tracking-tight">TrafficAI</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            {['Features', 'Architecture', 'Models', 'Results'].map(item => (
+            {['Features'].map(item => (
               <a key={item} href={`#${item.toLowerCase()}`}
                 className="text-sm text-slate-400 hover:text-white transition-colors font-body">
                 {item}
@@ -233,72 +233,6 @@ export default function LandingPage() {
                 </FadeUp>
               )
             })}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Architecture ───────────────────────────────────────── */}
-      <section id="architecture" className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <FadeUp>
-            <div className="text-center mb-16">
-              <p className="text-xs font-mono text-crimson-400 mb-3 tracking-widest uppercase">System Design</p>
-              <h2 className="section-title text-4xl mb-4">Production Architecture</h2>
-            </div>
-          </FadeUp>
-
-          <FadeUp delay={0.1}>
-            <div className="glass-card p-8 font-mono text-sm">
-              <pre className="text-slate-300 leading-7 overflow-x-auto">{`
-smart-traffic-ai/
-├── frontend/          Vite + React 18 + Tailwind + Framer Motion
-│   └── src/pages/     Dashboard · Crossroad AI · Analytics
-│                      Ambulance · Signal Control · Admin · Login
-├── backend/           Flask 3.0 + SQLite + JWT Auth
-│   └── routes/        auth · traffic · detection · prediction
-│                      analytics · signals · crossroad
-└── ml_models/
-    ├── yolo/          YOLOv11s inference (ultralytics)
-    ├── opencv/        HSV ambulance detection fallback
-    └── congestion/    RF + XGBoost + LR → Voting Ensemble
-              `.trim()}</pre>
-            </div>
-          </FadeUp>
-        </div>
-      </section>
-
-      {/* ── Model Results ──────────────────────────────────────── */}
-      <section id="results" className="py-24 px-6 border-t border-white/5">
-        <div className="max-w-5xl mx-auto">
-          <FadeUp>
-            <div className="text-center mb-16">
-              <p className="text-xs font-mono text-crimson-400 mb-3 tracking-widest uppercase">Benchmark Results</p>
-              <h2 className="section-title text-4xl mb-4">Model Performance</h2>
-            </div>
-          </FadeUp>
-
-          <div className="grid md:grid-cols-3 gap-5">
-            {[
-              { title: 'YOLOv11s Detection', rows: [['mAP@0.5', '89.1%'], ['Precision', '91.2%'], ['Recall', '88.7%'], ['Speed', 'CPU/GPU']] },
-              { title: 'CNN Ambulance', rows: [['Accuracy', '96.2%'], ['Precision', '95.8%'], ['Recall', '96.7%'], ['ROC-AUC', '0.991']] },
-              { title: 'Congestion Ensemble', rows: [['Accuracy', '96.4%'], ['F1-Score', '0.963'], ['XGBoost Acc', '95.8%'], ['RF Acc', '94.2%']] },
-            ].map((card, i) => (
-              <FadeUp key={card.title} delay={i * 0.1}>
-                <div className="glass-card p-6">
-                  <h3 className="font-display font-semibold text-sm text-white mb-5 pb-3 border-b border-white/8">
-                    {card.title}
-                  </h3>
-                  <div className="space-y-3">
-                    {card.rows.map(([label, value]) => (
-                      <div key={label} className="flex items-center justify-between">
-                        <span className="text-xs text-slate-400">{label}</span>
-                        <span className="text-sm font-mono font-medium text-white">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </FadeUp>
-            ))}
           </div>
         </div>
       </section>
