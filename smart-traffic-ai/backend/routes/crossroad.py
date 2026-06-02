@@ -22,11 +22,13 @@ Ambulance: immediate 90s priority override, all phases suspended.
 """
 
 import os
+import json
+import copy
 import time
 import uuid
 import threading
 from datetime import datetime
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, Response, stream_with_context
 from flask_jwt_extended import jwt_required
 
 crossroad_bp = Blueprint("crossroad", __name__)
@@ -66,6 +68,34 @@ VEHICLE_WEIGHT = {
 
 ROADS = ["north", "south", "east", "west"]
 ALLOWED_EXTS = {".mp4", ".avi", ".mov", ".mkv", ".webm", ".wmv", ".flv"}
+
+# ── JSON Event Schema ──────────────────────────────────────────
+#
+# TELEMETRY_UPDATE — published by the orchestrator every 1 s
+# {
+#   "event": "TELEMETRY_UPDATE",
+#   "intersection_state": {
+#     "<road>": {
+#       "lane":   "North",
+#       "counts": {"car": 2, "motorcycle": 10, "auto_rickshaw": 5, "bus": 1, ...},
+#       "total":  18,
+#       "alert":  null            # or "Ambulance in North Lane"
+#     }, ...
+#   },
+#   "emergency":      false,
+#   "emergency_road": null,
+#   "signal_mode":    "auto",
+#   "timestamp":      "ISO-8601"
+# }
+#
+# EMERGENCY_DETECTED — same shape but event = "EMERGENCY_DETECTED" and
+#   top-level "alert": "Ambulance in <Road> Lane"
+#
+EVENT_TYPES = {
+    "TELEMETRY_UPDATE":    "TELEMETRY_UPDATE",
+    "EMERGENCY_DETECTED":  "EMERGENCY_DETECTED",
+    "SIGNAL_CHANGE":       "SIGNAL_CHANGE",
+}
 
 # ── 4-Phase signal definitions ─────────────────────────────────
 PHASES = {
@@ -208,8 +238,34 @@ _crossroad = {
     "phase_scores":   {"A": 0.0, "B": 0.0, "C": 0.0, "D": 0.0},
     "roads":          {r: blank_road(r) for r in ROADS},
     "updated_at":     datetime.utcnow().isoformat(),
+    # Rolling telemetry state — updated on every frame, broadcast to Dashboard subscribers
+    "intersection_state": {
+        r: {"lane": r.capitalize(), "counts": {}, "total": 0, "alert": None}
+        for r in ROADS
+    },
+    "last_telemetry_at": None,
 }
 _lock = threading.Lock()
+
+
+def _update_intersection_telemetry(road: str, vehicle_counts: dict, ambulance_detected: bool = False):
+    """
+    Update the rolling intersection_state for one lane.
+    Must be called while holding _lock.
+
+    Publishes a TELEMETRY_UPDATE (or EMERGENCY_DETECTED) event that the
+    /telemetry/stream SSE endpoint will forward to all Dashboard subscribers.
+    """
+    counts = {k: int(v) for k, v in vehicle_counts.items() if isinstance(v, (int, float))}
+    total  = sum(counts.values())
+    alert  = f"Ambulance in {road.capitalize()} Lane" if ambulance_detected else None
+    _crossroad["intersection_state"][road] = {
+        "lane":   road.capitalize(),
+        "counts": counts,
+        "total":  total,
+        "alert":  alert,
+    }
+    _crossroad["last_telemetry_at"] = datetime.utcnow().isoformat()
 
 
 def update_signals():
@@ -481,6 +537,7 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
                     "right_pcu":          roi["right_pcu"],
                     "updated_at":         datetime.utcnow().isoformat(),
                 })
+                _update_intersection_telemetry(road, vehicle_counts, ambulance)
                 update_signals()
 
         frame_num += 1
@@ -532,6 +589,7 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
                 "right_pcu":          avg_right_pcu,
                 "updated_at":         datetime.utcnow().isoformat(),
             })
+            _update_intersection_telemetry(road, avg_counts, amb_detected)
             _crossroad["cycle_count"] += 1
             update_signals()
 
@@ -582,21 +640,106 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
 def get_state():
     with _lock:
         state = {
-            "name":           _crossroad["name"],
-            "location":       _crossroad["location"],
-            "active_road":    _crossroad["active_road"],
-            "signal_mode":    _crossroad["signal_mode"],
-            "emergency_road": _crossroad["emergency_road"],
-            "cycle_count":    _crossroad["cycle_count"],
-            "current_phase":  _crossroad["current_phase"],
-            "phase_scores":   _crossroad["phase_scores"],
-            "updated_at":     _crossroad["updated_at"],
+            "name":              _crossroad["name"],
+            "location":          _crossroad["location"],
+            "active_road":       _crossroad["active_road"],
+            "signal_mode":       _crossroad["signal_mode"],
+            "emergency_road":    _crossroad["emergency_road"],
+            "cycle_count":       _crossroad["cycle_count"],
+            "current_phase":     _crossroad["current_phase"],
+            "phase_scores":      _crossroad["phase_scores"],
+            "updated_at":        _crossroad["updated_at"],
+            # Live telemetry snapshot — powers the Dashboard table
+            "intersection_state":  copy.deepcopy(_crossroad["intersection_state"]),
+            "last_telemetry_at":   _crossroad["last_telemetry_at"],
             "roads": {
                 r: {k: v for k, v in s.items() if k != "frame_results"}
                 for r, s in _crossroad["roads"].items()
             },
         }
     return jsonify(state), 200
+
+
+@crossroad_bp.route("/telemetry", methods=["GET"])
+@jwt_required()
+def get_telemetry():
+    """REST snapshot of the current intersection telemetry — same data as the SSE stream."""
+    with _lock:
+        sig_mode   = _crossroad["signal_mode"]
+        emerg_road = _crossroad.get("emergency_road")
+        payload = {
+            "event":              EVENT_TYPES["EMERGENCY_DETECTED"] if sig_mode == "emergency"
+                                  else EVENT_TYPES["TELEMETRY_UPDATE"],
+            "intersection_state": copy.deepcopy(_crossroad["intersection_state"]),
+            "emergency":          sig_mode == "emergency",
+            "emergency_road":     emerg_road,
+            "signal_mode":        sig_mode,
+            "timestamp":          datetime.utcnow().isoformat(),
+        }
+        if sig_mode == "emergency" and emerg_road:
+            payload["alert"] = f"Ambulance in {emerg_road.capitalize()} Lane"
+    return jsonify(payload), 200
+
+
+@crossroad_bp.route("/telemetry/stream", methods=["GET"])
+def telemetry_stream():
+    """
+    Server-Sent Events endpoint — broadcasts intersection_state every 1 second.
+
+    Authentication: pass the JWT as ?jwt=<token>  (query-string location).
+
+    Frontend usage (EventSource):
+        const es = new EventSource(`/api/crossroad/telemetry/stream?jwt=${token}`)
+        es.onmessage = e => setTelemetry(JSON.parse(e.data))
+
+    Python async usage (aiohttp):
+        async with session.get(url) as resp:
+            async for line in resp.content:
+                if line.startswith(b"data: "):
+                    payload = json.loads(line[6:])
+    """
+    from flask_jwt_extended import verify_jwt_in_request
+    try:
+        verify_jwt_in_request(locations=["headers", "query_string"])
+    except Exception:
+        return jsonify({"error": "Missing or invalid token"}), 401
+
+    def generate():
+        while True:
+            try:
+                with _lock:
+                    sig_mode   = _crossroad["signal_mode"]
+                    emerg_road = _crossroad.get("emergency_road")
+                    state      = copy.deepcopy(_crossroad["intersection_state"])
+
+                payload = {
+                    "event":              EVENT_TYPES["EMERGENCY_DETECTED"] if sig_mode == "emergency"
+                                          else EVENT_TYPES["TELEMETRY_UPDATE"],
+                    "intersection_state": state,
+                    "emergency":          sig_mode == "emergency",
+                    "emergency_road":     emerg_road,
+                    "signal_mode":        sig_mode,
+                    "timestamp":          datetime.utcnow().isoformat(),
+                }
+                if sig_mode == "emergency" and emerg_road:
+                    payload["alert"] = f"Ambulance in {emerg_road.capitalize()} Lane"
+
+                yield f"data: {json.dumps(payload)}\n\n"
+                time.sleep(1)
+            except GeneratorExit:
+                break
+            except Exception:
+                break
+
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control":     "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection":        "keep-alive",
+        },
+    )
 
 
 @crossroad_bp.route("/models", methods=["GET"])
@@ -691,6 +834,12 @@ def trigger_ambulance(road):
             _crossroad["roads"][r]["green_duration"] = 90 if r == road else 0
         _crossroad["active_road"] = road
         _crossroad["updated_at"]  = datetime.utcnow().isoformat()
+        # Stamp EMERGENCY_DETECTED alert into telemetry so the Dashboard flashes a warning
+        _update_intersection_telemetry(
+            road,
+            _crossroad["roads"][road].get("vehicle_counts", {}),
+            ambulance_detected=True,
+        )
     return jsonify({
         "message": f"Emergency: {road.upper()} road cleared — 90s green",
         "road": road,
@@ -704,6 +853,12 @@ def clear_ambulance(road):
         _crossroad["roads"][road]["ambulance_detected"] = False
         _crossroad["emergency_road"] = None
         _crossroad["signal_mode"]    = "auto"
+        # Clear the alert flag from telemetry
+        _update_intersection_telemetry(
+            road,
+            _crossroad["roads"][road].get("vehicle_counts", {}),
+            ambulance_detected=False,
+        )
         update_signals()
     return jsonify({"message": "Emergency cleared — resumed auto mode", "signal_mode": "auto"}), 200
 

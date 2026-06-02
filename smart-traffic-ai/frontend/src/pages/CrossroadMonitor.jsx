@@ -8,7 +8,7 @@ import {
   RotateCcw, Siren, Car, Bus,
   TruckIcon, Bike, AlertTriangle, CheckCircle,
   ChevronUp, ChevronDown, ChevronLeft, ChevronRight,
-  Film, MapPin, Radio,
+  Film, MapPin, Radio, Activity,
 } from 'lucide-react'
 import api from '@/services/api'
 
@@ -774,6 +774,175 @@ function ActiveFeedPanel({ roads, videoUrls, currentPhase, emergencyRoad }) {
   )
 }
 
+// ── Live Telemetry Dashboard ─────────────────────────────────
+// Reads intersection_state from the polled /crossroad/state response
+// (updated every 2 s). The backend SSE stream at /api/crossroad/telemetry/stream
+// can be used instead for true real-time delivery.
+const TELEMETRY_COLS = [
+  { key: 'car',           label: 'Cars'  },
+  { key: 'motorcycle',    label: 'Moto'  },
+  { key: 'auto_rickshaw', label: 'Auto'  },
+  { key: 'bus',           label: 'Bus'   },
+]
+
+function LiveDashboard({ intersectionState, signalMode, emergencyRoad }) {
+  const lanes    = ROADS.map(r => intersectionState?.[r]).filter(Boolean)
+  const hasData  = lanes.some(l => l.total > 0)
+  const isEmerg  = signalMode === 'emergency'
+  const maxTotal = Math.max(...lanes.map(l => l.total), 1)
+
+  return (
+    <div className="glass-card p-4 space-y-3">
+
+      {/* Title bar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Activity className="w-3.5 h-3.5 text-green-400 animate-pulse" />
+          <p className="text-xs font-mono text-slate-400 uppercase tracking-wide">Live Telemetry Dashboard</p>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <motion.div
+            animate={{ opacity: [1, 0.2, 1] }}
+            transition={{ duration: 1.2, repeat: Infinity }}
+            className="w-1.5 h-1.5 rounded-full bg-green-400"
+          />
+          <span className="text-[10px] font-mono text-green-400">LIVE</span>
+        </div>
+      </div>
+
+      {/* Emergency alert banner */}
+      <AnimatePresence>
+        {isEmerg && emergencyRoad && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <motion.div
+              animate={{ opacity: [1, 0.6, 1] }}
+              transition={{ duration: 0.65, repeat: Infinity }}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl
+                         bg-red-600/20 border border-red-500/50"
+            >
+              <Siren className="w-4 h-4 text-red-400 flex-shrink-0" />
+              <p className="text-xs font-bold text-red-300">
+                ⚠ ALERT: Ambulance in {emergencyRoad.charAt(0).toUpperCase() + emergencyRoad.slice(1)} Lane — Dashboard Warning Active
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Vehicle-count table */}
+      {hasData ? (
+        <div className="overflow-hidden rounded-xl border border-white/8">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="bg-white/5 border-b border-white/8">
+                <th className="text-left px-3 py-2 font-mono text-slate-400 font-medium">Lane</th>
+                {TELEMETRY_COLS.map(c => (
+                  <th key={c.key} className="text-right px-2 py-2 font-mono text-slate-400 font-medium">{c.label}</th>
+                ))}
+                <th className="text-right px-3 py-2 font-mono text-slate-400 font-medium">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lanes.map((lane, i) => {
+                const roadKey  = lane.lane.toLowerCase()
+                const isAlert  = !!lane.alert
+                const dotColor = ROAD_META[roadKey]?.color || '#3B82F6'
+                return (
+                  <motion.tr
+                    key={lane.lane}
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.04 }}
+                    className={`border-b border-white/5 transition-colors duration-300 ${
+                      isAlert ? 'bg-red-500/10' : i % 2 === 0 ? 'bg-white/[0.02]' : ''
+                    }`}
+                  >
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1.5">
+                        {isAlert ? (
+                          <motion.span
+                            animate={{ opacity: [1, 0, 1] }}
+                            transition={{ duration: 0.6, repeat: Infinity }}
+                            className="w-2 h-2 rounded-full bg-red-400 flex-shrink-0"
+                          />
+                        ) : (
+                          <span className="w-2 h-2 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: dotColor }} />
+                        )}
+                        <span className={`font-bold ${isAlert ? 'text-red-300' : 'text-white'}`}>
+                          {lane.lane}
+                        </span>
+                      </div>
+                    </td>
+                    {TELEMETRY_COLS.map(c => (
+                      <td key={c.key} className="text-right px-2 py-2 font-mono text-slate-300">
+                        {lane.counts?.[c.key] ?? 0}
+                      </td>
+                    ))}
+                    <td className="text-right px-3 py-2">
+                      <span className={`font-bold font-mono ${isAlert ? 'text-red-300' : 'text-white'}`}>
+                        {lane.total}
+                      </span>
+                    </td>
+                  </motion.tr>
+                )
+              })}
+
+              {/* Column totals */}
+              <tr className="bg-white/5 border-t border-white/10">
+                <td className="px-3 py-2 text-xs font-mono text-slate-500 font-bold">TOTAL</td>
+                {TELEMETRY_COLS.map(c => (
+                  <td key={c.key} className="text-right px-2 py-2 font-mono font-bold text-slate-300">
+                    {lanes.reduce((s, l) => s + (l.counts?.[c.key] ?? 0), 0)}
+                  </td>
+                ))}
+                <td className="text-right px-3 py-2 font-mono font-bold text-white">
+                  {lanes.reduce((s, l) => s + l.total, 0)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="text-center py-6 text-slate-600 font-mono text-xs">
+          Waiting for YOLO sense-module telemetry…
+        </div>
+      )}
+
+      {/* Per-lane load bars */}
+      {hasData && (
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-mono text-slate-500 uppercase">Load by lane</p>
+          {lanes.map(lane => {
+            const roadKey = lane.lane.toLowerCase()
+            const pct     = (lane.total / maxTotal) * 100
+            const color   = lane.alert ? '#EF4444' : ROAD_META[roadKey]?.color || '#3B82F6'
+            return (
+              <div key={lane.lane} className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-slate-400 w-12">{lane.lane}</span>
+                <div className="flex-1 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                  <motion.div
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.5 }}
+                    className="h-full rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                </div>
+                <span className="text-[10px] font-mono text-white w-6 text-right">{lane.total}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Main Page ────────────────────────────────────────────────
 export default function CrossroadMonitor() {
   const [crossroad, setCrossroad] = useState(null)
@@ -1008,6 +1177,13 @@ export default function CrossroadMonitor() {
               </div>
             </div>
           )}
+
+          {/* Live Telemetry Dashboard */}
+          <LiveDashboard
+            intersectionState={crossroad?.intersection_state}
+            signalMode={signalMode}
+            emergencyRoad={crossroad?.emergency_road}
+          />
 
           {/* How-it-works (idle only) */}
           {!anyActive && (

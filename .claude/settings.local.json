@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(pip install *)",
-      "Bash(python backend/app.py)"
+      "Bash(python backend/app.py)",
+      "Bash(python start.py)",
+      "Bash(python -c ' *)"
     ]
   }
 }
