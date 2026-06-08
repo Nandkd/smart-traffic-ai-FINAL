@@ -74,41 +74,75 @@ function useLiveClock() {
   return time
 }
 
-// ── Simulated AI bounding boxes ──────────────────────────────
-// Positions are seeded from vehicle counts so they stay stable between renders.
-// Replace with real YOLO bbox coords when RTSP is connected.
-function DetectionBoxes({ vehicleCounts }) {
-  const boxes = useMemo(() => {
-    const result = []
-    const total = Object.values(vehicleCounts || {}).reduce((a, b) => a + b, 0)
-    if (!total) return result
+// ── Real YOLO bounding boxes ─────────────────────────────────
+// Renders actual detection coordinates from state.current_frame.detections.
+// Applies object-cover math so boxes align with the visible video pixels.
+function DetectionBoxes({ detections, videoRef }) {
+  const overlayRef = useRef(null)
+  const [cSize,   setCSize]   = useState({ w: 0, h: 0 })
+  const [vNative, setVNative] = useState({ w: 0, h: 0 })
 
-    let seed = total * 31337
-    const rand = () => {
-      seed = (seed * 1664525 + 1013904223) & 0xffffffff
-      return (seed >>> 0) / 0xffffffff
+  // Track rendered container size (overlay is absolute inset-0, matches the video box)
+  useEffect(() => {
+    const el = overlayRef.current
+    if (!el) return
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect
+      setCSize({ w: width, h: height })
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  // Track native video pixel dimensions
+  useEffect(() => {
+    const vid = videoRef?.current
+    if (!vid) return
+    const read = () => { if (vid.videoWidth) setVNative({ w: vid.videoWidth, h: vid.videoHeight }) }
+    read()
+    vid.addEventListener('loadedmetadata', read)
+    return () => vid.removeEventListener('loadedmetadata', read)
+  }, [videoRef])
+
+  const boxes = useMemo(() => {
+    if (!detections?.length || !cSize.w || !cSize.h || !vNative.w || !vNative.h) return []
+
+    // object-cover: scale video to cover container, crop the overflow
+    const cAspect = cSize.w / cSize.h
+    const vAspect = vNative.w / vNative.h
+    let scale, offX, offY
+    if (vAspect > cAspect) {
+      // video wider than container → left/right edges cropped
+      scale = cSize.h / vNative.h
+      offX  = (vNative.w * scale - cSize.w) / 2
+      offY  = 0
+    } else {
+      // video taller than container → top/bottom edges cropped
+      scale = cSize.w / vNative.w
+      offX  = 0
+      offY  = (vNative.h * scale - cSize.h) / 2
     }
 
-    Object.entries(vehicleCounts || {})
-      .filter(([, v]) => v > 0)
-      .forEach(([cls, count]) => {
-        const color = VEHICLE_META[cls]?.color || '#3B82F6'
-        const n = Math.min(count, 3)
-        for (let i = 0; i < n; i++) {
-          const w = 13 + rand() * 18
-          const h = 9  + rand() * 13
-          const x = 3  + rand() * (82 - w)
-          const y = 5  + rand() * (78 - h)
-          result.push({ x, y, w, h, color, label: cls.replace('_', ' ') })
+    return detections
+      .map(det => {
+        const [x1, y1, x2, y2] = det.bbox
+        const bx = (x1 * scale - offX) / cSize.w * 100
+        const by = (y1 * scale - offY) / cSize.h * 100
+        const bw = (x2 - x1) * scale / cSize.w * 100
+        const bh = (y2 - y1) * scale / cSize.h * 100
+        return {
+          x: bx, y: by, w: bw, h: bh,
+          color: VEHICLE_META[det.class]?.color || '#3B82F6',
+          label: det.class.replace('_', ' '),
+          conf:  Math.round(det.confidence * 100),
         }
       })
-    return result.slice(0, 10)
-  }, [vehicleCounts])
-
-  if (!boxes.length) return null
+      // drop boxes fully outside the visible crop region
+      .filter(b => b.w > 0.5 && b.h > 0.5 && b.x + b.w > 0 && b.y + b.h > 0 && b.x < 100 && b.y < 100)
+  }, [detections, cSize, vNative])
 
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div ref={overlayRef} className="absolute inset-0 pointer-events-none overflow-hidden">
       {boxes.map((box, i) => (
         <motion.div
           key={i}
@@ -117,7 +151,7 @@ function DetectionBoxes({ vehicleCounts }) {
           animate={CCTV_REALISM_MODE ? { opacity: [0.55, 0.95, 0.55] } : { opacity: 1 }}
           transition={CCTV_REALISM_MODE
             ? { duration: 2.2 + i * 0.25, repeat: Infinity, delay: i * 0.12 }
-            : { duration: 0.3 }}
+            : { duration: 0.2 }}
           style={{
             left: `${box.x}%`, top: `${box.y}%`,
             width: `${box.w}%`, height: `${box.h}%`,
@@ -125,13 +159,13 @@ function DetectionBoxes({ vehicleCounts }) {
             boxShadow: `0 0 10px ${box.color}99, inset 0 0 6px ${box.color}22`,
           }}
         >
-          {/* label tag */}
+          {/* label + confidence */}
           <div
             className="absolute -top-[16px] left-0 text-[9px] font-mono font-bold
                        px-1.5 py-0.5 leading-none whitespace-nowrap"
             style={{ background: box.color + 'dd', color: '#000' }}
           >
-            {box.label}
+            {box.label} {box.conf}%
           </div>
           {/* corner marks */}
           {[
@@ -160,11 +194,10 @@ function DetectionBoxes({ vehicleCounts }) {
 
 // ── CCTVFeed ─────────────────────────────────────────────────
 // videoUrl: objectURL from File | RTSP/HLS stream URL (future)
-function CCTVFeed({ road, videoUrl, state }) {
+function CCTVFeed({ road, videoUrl, state, onFrameChange }) {
   const meta     = ROAD_META[road]
   const signal   = state?.signal || 'red'
   const density  = state?.density_class || 'unknown'
-  const vehicles = state?.total_vehicles || 0
   const counts   = state?.vehicle_counts || {}
   const isEmerg  = state?.ambulance_detected
   const ds       = DENSITY_STYLE[density] || DENSITY_STYLE.unknown
@@ -172,6 +205,63 @@ function CCTVFeed({ road, videoUrl, state }) {
   const date     = new Date().toLocaleDateString('en-GB').replace(/\//g, '-')
   const camId    = `CAM-${road[0].toUpperCase()}${(road.charCodeAt(0) * 17 % 89) + 10}`
   const videoRef = useRef(null)
+
+  // ── Option B: time-synced detection overlay ──────────────────
+  // Once processing completes, fetch all frame_results once and keep them.
+  // On every timeupdate/seeked event, pick the nearest timestamp_sec entry
+  // so boxes match whatever the video is currently showing — including loops.
+  const [frameResults, setFrameResults] = useState([])
+  const [activeFrame, setActiveFrame]   = useState(null)
+
+  // HUD vehicle count: use the current frame's integer count while replaying,
+  // fall back to the averaged state value during processing or before frames load.
+  const vehicles = (frameResults.length > 0 && activeFrame != null)
+    ? (activeFrame.total_vehicles ?? 0)
+    : (state?.total_vehicles || 0)
+
+  // Fetch frame_results when status transitions to 'completed'; clear on reset
+  useEffect(() => {
+    if (state?.status === 'completed') {
+      api.get(`/crossroad/frames/${road}`)
+        .then(r => setFrameResults(r.data.frames || []))
+        .catch(() => {})
+    } else if (state?.status === 'idle' || !state?.status) {
+      setFrameResults([])
+      setActiveFrame(null)
+      onFrameChange?.(null)
+    }
+  }, [state?.status, road])
+
+  // Re-run whenever frameResults are (re-)populated or video element mounts
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video || !frameResults.length) return
+
+    const findNearest = () => {
+      const t = video.currentTime
+      let best = frameResults[0]
+      let minDiff = Math.abs(best.timestamp_sec - t)
+      for (let i = 1; i < frameResults.length; i++) {
+        const diff = Math.abs(frameResults[i].timestamp_sec - t)
+        if (diff < minDiff) { minDiff = diff; best = frameResults[i] }
+      }
+      setActiveFrame(best || null)
+      onFrameChange?.(best || null)
+    }
+
+    video.addEventListener('timeupdate', findNearest)
+    video.addEventListener('seeked',     findNearest)
+    findNearest() // populate immediately for current position
+    return () => {
+      video.removeEventListener('timeupdate', findNearest)
+      video.removeEventListener('seeked',     findNearest)
+    }
+  }, [frameResults])
+
+  // Time-synced when frames are available; fall back to live state during processing
+  const currentDetections = frameResults.length > 0 && activeFrame
+    ? (activeFrame.detections || [])
+    : (state?.current_frame?.detections || state?.detections || [])
 
   useEffect(() => {
     if (videoRef.current && videoUrl) {
@@ -250,8 +340,13 @@ function CCTVFeed({ road, videoUrl, state }) {
         <span className="text-[10px] font-mono font-bold text-white">{time}</span>
       </div>
 
-      {/* ── AI bounding boxes ── */}
-      {videoUrl && vehicles > 0 && <DetectionBoxes vehicleCounts={counts} />}
+      {/* ── AI bounding boxes (Option B: time-synced to video.currentTime) ── */}
+      {videoUrl && (
+        <DetectionBoxes
+          detections={currentDetections}
+          videoRef={videoRef}
+        />
+      )}
 
       {/* ── Bottom-left: vehicle count + density ── */}
       <div className="absolute bottom-1.5 left-2 flex flex-col gap-0.5 z-10">
@@ -461,6 +556,7 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
   const [showOverride, setOver] = useState(false)
   const [overDur, setOverDur]   = useState(30)
   const [frames, setFrames]     = useState([])
+  const [activeFrame, setActiveFrame] = useState(null)
   const fileRef = useRef(null)
   const meta    = ROAD_META[road]
   const Icon    = meta.icon
@@ -474,6 +570,7 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
     if (status === 'completed') {
       api.get(`/crossroad/frames/${road}`).then(r => setFrames(r.data.frames || [])).catch(() => {})
     }
+    if (status === 'idle') setActiveFrame(null)
   }, [status, road])
 
   const handleFile = (file) => {
@@ -517,7 +614,7 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
       </div>
 
       {/* CCTV Feed — always visible once video uploaded */}
-      <CCTVFeed road={road} videoUrl={videoUrl} state={state} />
+      <CCTVFeed road={road} videoUrl={videoUrl} state={state} onFrameChange={setActiveFrame} />
 
       {/* Ambulance alert */}
       <AnimatePresence>
@@ -624,9 +721,11 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
       {(status === 'completed' || (status === 'processing' && state?.current_frame)) && (
         <div className="space-y-3">
           <div>
-            <p className="text-xs text-slate-500 font-mono mb-2">DETECTED VEHICLES (avg/frame)</p>
+            <p className="text-xs text-slate-500 font-mono mb-2">
+              {activeFrame ? 'DETECTED VEHICLES (current frame)' : 'DETECTED VEHICLES (avg/frame)'}
+            </p>
             <div className="grid grid-cols-2 gap-1.5">
-              {Object.entries(state?.vehicle_counts || {}).map(([cls, cnt]) => {
+              {Object.entries((activeFrame?.vehicle_counts || state?.vehicle_counts) || {}).map(([cls, cnt]) => {
                 const vm = VEHICLE_META[cls] || VEHICLE_META.car
                 return (
                   <div key={cls} className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-white/3 border border-white/5">
@@ -666,8 +765,12 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
 
           <div className="grid grid-cols-3 gap-2 text-center">
             <div className="p-2 bg-white/3 rounded-xl border border-white/5">
-              <p className="text-base font-bold text-white">{state?.total_vehicles || 0}</p>
-              <p className="text-xs text-slate-500">Avg vehicles</p>
+              <p className="text-base font-bold text-white">
+                {activeFrame?.total_vehicles ?? state?.total_vehicles ?? 0}
+              </p>
+              <p className="text-xs text-slate-500">
+                {activeFrame ? 'Frame vehicles' : 'Avg vehicles'}
+              </p>
             </div>
             <div className="p-2 bg-white/3 rounded-xl border border-white/5">
               <p className="text-base font-bold text-amber-400">{state?.pcu_count || 0}</p>

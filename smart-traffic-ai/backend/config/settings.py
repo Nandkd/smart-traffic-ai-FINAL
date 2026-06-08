@@ -28,6 +28,10 @@ class BaseConfig:
         "CNN_WEIGHTS_PATH",
         str(BASE_DIR.parent / "ml_models" / "weights" / "ambulance_cnn.pth"),
     )
+    FASTER_RCNN_WEIGHTS = os.getenv(
+        "FASTER_RCNN_WEIGHTS_PATH",
+        str(BASE_DIR.parent / "ml_models" / "weights" / "faster_rcnn_ambulance_vehicle.pth"),
+    )
     ENSEMBLE_PATH = os.getenv(
         "ENSEMBLE_PATH",
         str(BASE_DIR.parent / "ml_models" / "weights" / "congestion_ensemble.pkl"),

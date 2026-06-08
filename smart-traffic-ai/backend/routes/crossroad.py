@@ -59,6 +59,30 @@ VEHICLE_WEIGHT = {
 ROADS = ["north", "south", "east", "west"]
 ALLOWED_EXTS = {".mp4", ".avi", ".mov", ".mkv", ".webm", ".wmv", ".flv"}
 
+# ── Faster R-CNN lazy loader (module-level singleton) ──────────
+_frcnn_model = None
+_frcnn_lock  = threading.Lock()
+
+
+def _get_faster_rcnn():
+    """
+    Return the shared FasterRCNNPredictor for ambulance verification.
+    Safe to call from multiple road-processing threads simultaneously.
+    Returns None if weights are missing so detection degrades gracefully.
+    """
+    global _frcnn_model
+    if _frcnn_model is None:
+        with _frcnn_lock:
+            if _frcnn_model is None:
+                try:
+                    from flask import current_app
+                    weights = current_app.config.get("FASTER_RCNN_WEIGHTS")
+                except RuntimeError:
+                    weights = None
+                from ml_models.faster_rcnn.predictor import get_faster_rcnn as _load
+                _frcnn_model = _load(weights) or "unavailable"
+    return _frcnn_model if _frcnn_model != "unavailable" else None
+
 # ── JSON Event Schema ──────────────────────────────────────────
 #
 # TELEMETRY_UPDATE — published by the orchestrator every 1 s
@@ -172,6 +196,20 @@ def compute_pcu(vehicle_counts: dict) -> float:
     for vtype, count in vehicle_counts.items():
         pcu += count * VEHICLE_WEIGHT.get(vtype, 1.0)
     return round(pcu, 2)
+
+
+def _iou(b1, b2):
+    """Intersection-over-Union for two [x1, y1, x2, y2] boxes."""
+    ix1 = max(b1[0], b2[0])
+    iy1 = max(b1[1], b2[1])
+    ix2 = min(b1[2], b2[2])
+    iy2 = min(b1[3], b2[3])
+    inter = max(0, ix2 - ix1) * max(0, iy2 - iy1)
+    if inter == 0:
+        return 0.0
+    a1 = (b1[2] - b1[0]) * (b1[3] - b1[1])
+    a2 = (b2[2] - b2[0]) * (b2[3] - b2[1])
+    return inter / (a1 + a2 - inter)
 
 
 def compute_roi_counts(detections: list, frame_width: int) -> dict:
@@ -513,6 +551,62 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
             pcu        = compute_pcu(vehicle_counts)
             ambulance  = "ambulance" in vehicle_counts
 
+            # ── Faster R-CNN secondary verification ───────────────
+            # When YOLO flags an ambulance in this frame, crop its
+            # bounding box and ask Faster R-CNN to confirm.  Only a
+            # confirmed ambulance appends to ambulance_times and
+            # eventually triggers the 90-second emergency override.
+            frcnn_verified = False
+            if ambulance:
+                frcnn = _get_faster_rcnn()
+                if frcnn is not None:
+                    try:
+                        # Find the highest-confidence ambulance detection
+                        amb_boxes = [
+                            d for d in detections if d["class"] == "ambulance"
+                        ]
+                        if amb_boxes:
+                            best_box = max(amb_boxes, key=lambda d: d["confidence"])
+                            x1, y1, x2, y2 = best_box["bbox"]
+                            x1, y1 = max(0, x1), max(0, y1)
+                            x2, y2 = min(frame.shape[1], x2), min(frame.shape[0], y2)
+                            if x2 > x1 and y2 > y1:
+                                crop = frame[y1:y2, x1:x2]
+                                frcnn_result = frcnn.verify_numpy(crop)
+                                if frcnn_result["ambulance_confirmed"]:
+                                    frcnn_verified = True
+                                else:
+                                    # FRCNN rejected — suppress emergency override.
+                                    # Ambulance bbox is KEPT in detections[] so the
+                                    # CCTV overlay renders it; ambulance_detected stays
+                                    # False so the 90-second green is never triggered.
+                                    ambulance = False
+                                    amb_bboxes = [d["bbox"] for d in amb_boxes]
+                                    kept = []
+                                    for _d in detections:
+                                        if _d["class"] in ("car", "truck", "bus"):
+                                            overlaps = any(
+                                                _iou(_d["bbox"], ab) > 0.40
+                                                for ab in amb_bboxes
+                                            )
+                                            if overlaps:
+                                                # Cross-class duplicate of the ambulance —
+                                                # drop to avoid double-boxing same vehicle.
+                                                cnt = vehicle_counts.get(_d["class"], 1)
+                                                if cnt <= 1:
+                                                    vehicle_counts.pop(_d["class"], None)
+                                                else:
+                                                    vehicle_counts[_d["class"]] = cnt - 1
+                                                continue
+                                        kept.append(_d)
+                                    detections = kept
+                    except Exception as _frcnn_exc:
+                        # On error, trust YOLO so we never silently miss a real
+                        # ambulance due to a transient inference failure.
+                        frcnn_verified = True
+                        print(f"[{road}] FRCNN verify error (trusting YOLO): {_frcnn_exc}")
+                # Weights not yet placed — trust YOLO as-is
+
             if ambulance:
                 ambulance_times.append(ts_sec)
 
@@ -532,6 +626,7 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
                 "density_class":      density,
                 "congestion_score":   cong_sc,
                 "ambulance_detected": ambulance,
+                "frcnn_verified":     frcnn_verified,
                 "inference_ms":       elapsed_ms,
                 "straight_count":     roi["straight_count"],
                 "straight_pcu":       roi["straight_pcu"],
