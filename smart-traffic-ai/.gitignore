@@ -28,6 +28,7 @@ pip-wheel-metadata/
 venv/
 env/
 ENV/
+.venv311/
 
 # ── Node / Frontend ────────────────────────────────────────────
 node_modules/

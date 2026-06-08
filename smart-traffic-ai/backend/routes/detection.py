@@ -1,9 +1,8 @@
-"""backend/routes/detection.py — YOLOv8 & CNN inference endpoints."""
+"""backend/routes/detection.py — YOLOv8 inference endpoints using best.pt."""
 
 import os
 import base64
 import uuid
-import json
 import time
 import numpy as np
 from flask import Blueprint, request, jsonify, current_app
@@ -11,9 +10,15 @@ from flask_jwt_extended import jwt_required
 
 detection_bp = Blueprint("detection", __name__)
 
+# Trained classes in best.pt (from data.yaml)
+TRAINED_CLASSES = {"car", "motorcycle", "bus", "truck", "ambulance"}
+
 # ── Lazy model loading ─────────────────────────────────────────
 _yolo_model = None
-_cnn_model = None
+
+_WEIGHTS_REL = os.path.join(
+    os.path.dirname(__file__), "../../ml_models/weights/best.pt"
+)
 
 
 def get_yolo():
@@ -21,37 +26,31 @@ def get_yolo():
     if _yolo_model is None:
         try:
             from ultralytics import YOLO
-            weights = os.path.join(
-                os.path.dirname(__file__), "../../ml_models/weights/yolov8_traffic.pt"
-            )
+            # App config takes precedence (set in settings.py); fall back to relative path
+            try:
+                weights = current_app.config.get("YOLO_WEIGHTS", _WEIGHTS_REL)
+            except RuntimeError:
+                weights = _WEIGHTS_REL
             if os.path.exists(weights):
                 _yolo_model = YOLO(weights)
+                try:
+                    current_app.logger.info(f"[detection] YOLO loaded: {weights}")
+                except RuntimeError:
+                    print(f"[detection] YOLO loaded: {weights}")
             else:
-                _yolo_model = YOLO("yolov8n.pt")  # fallback to pretrained
+                msg = f"[detection] best.pt not found at {weights} — place weights file there and restart"
+                try:
+                    current_app.logger.warning(msg)
+                except RuntimeError:
+                    print(msg)
+                _yolo_model = "unavailable"
         except Exception as e:
-            current_app.logger.warning(f"YOLO load failed: {e}")
+            try:
+                current_app.logger.warning(f"[detection] YOLO load failed: {e}")
+            except RuntimeError:
+                print(f"[detection] YOLO load failed: {e}")
             _yolo_model = "unavailable"
     return _yolo_model if _yolo_model != "unavailable" else None
-
-
-def get_cnn():
-    global _cnn_model
-    if _cnn_model is None:
-        try:
-            import torch
-            from ml_models.cnn.architecture import AmbulanceCNN
-            weights = os.path.join(
-                os.path.dirname(__file__), "../../ml_models/weights/ambulance_cnn.pth"
-            )
-            model = AmbulanceCNN()
-            if os.path.exists(weights):
-                model.load_state_dict(torch.load(weights, map_location="cpu"))
-            model.eval()
-            _cnn_model = model
-        except Exception as e:
-            current_app.logger.warning(f"CNN load failed: {e}")
-            _cnn_model = "unavailable"
-    return _cnn_model if _cnn_model != "unavailable" else None
 
 
 # ── Helper: decode base64 image ────────────────────────────────
@@ -59,10 +58,36 @@ def decode_image(b64_str: str) -> np.ndarray:
     import cv2
     data = base64.b64decode(b64_str.split(",")[-1])
     arr = np.frombuffer(data, np.uint8)
-    img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
-    return img
+    return cv2.imdecode(arr, cv2.IMREAD_COLOR)
 
 
+def _run_inference(model, img_path: str) -> tuple[list, dict]:
+    """
+    Run best.pt inference on img_path.
+    Returns (detections, vehicle_counts).
+    Ambulance uses a lower confidence threshold since it is safety-critical.
+    """
+    results = model(img_path, conf=0.25, verbose=False)
+    r = results[0]
+    detections = []
+    vehicle_counts = {}
+    for box in r.boxes:
+        cls_name = r.names[int(box.cls)].lower()
+        conf_val = float(box.conf)
+        # Only keep classes the model was actually trained on
+        if cls_name not in TRAINED_CLASSES:
+            continue
+        # Per-class confidence gate: ambulance is safety-critical → keep lower threshold
+        min_conf = 0.30 if cls_name == "ambulance" else 0.40
+        if conf_val < min_conf:
+            continue
+        vehicle_counts[cls_name] = vehicle_counts.get(cls_name, 0) + 1
+        detections.append({
+            "class":      cls_name,
+            "confidence": round(conf_val, 3),
+            "bbox":       [round(x) for x in box.xyxy[0].tolist()],
+        })
+    return detections, vehicle_counts
 
 
 # ── Endpoints ──────────────────────────────────────────────────
@@ -72,81 +97,54 @@ def decode_image(b64_str: str) -> np.ndarray:
 def detect_vehicles():
     """
     POST /api/detect/vehicles
-    Body: { "image": "<base64 string>" }  OR  multipart file
-    Returns: detections, vehicle counts, density class
+    Body: multipart image file  OR  { "image": "<base64 string>" }
+    Returns: detections, vehicle_counts, density_class, ambulance_detected
     """
     start = time.time()
     model = get_yolo()
 
-    # Try real inference
-    if model and (request.content_type or "").startswith("multipart"):
-        import cv2
+    if model is None:
+        return jsonify({"error": "YOLO model unavailable — place best.pt in ml_models/weights/ and restart"}), 503
+
+    upload_folder = current_app.config["UPLOAD_FOLDER"]
+
+    # ── Multipart file ─────────────────────────────────────────
+    if (request.content_type or "").startswith("multipart"):
         file = request.files.get("image")
         if not file:
             return jsonify({"error": "No image file provided"}), 400
-        tmp_path = os.path.join(current_app.config["UPLOAD_FOLDER"], f"{uuid.uuid4()}.jpg")
+        tmp_path = os.path.join(upload_folder, f"{uuid.uuid4()}.jpg")
         file.save(tmp_path)
         try:
-            results = model(tmp_path, conf=0.4)
-            r = results[0]
-            detections = []
-            for box in r.boxes:
-                detections.append({
-                    "class": r.names[int(box.cls)],
-                    "confidence": round(float(box.conf), 3),
-                    "bbox": [round(x) for x in box.xyxy[0].tolist()],
-                })
-            vehicle_counts = {}
-            for d in detections:
-                vehicle_counts[d["class"]] = vehicle_counts.get(d["class"], 0) + 1
-            total = sum(vehicle_counts.values())
-            density = "low" if total < 10 else ("medium" if total < 25 else "high")
-            elapsed_ms = round((time.time() - start) * 1000, 1)
-            return jsonify({
-                "detections": detections,
-                "vehicle_counts": vehicle_counts,
-                "total_vehicles": total,
-                "density_class": density,
-                "ambulance_detected": "ambulance" in vehicle_counts,
-                "inference_ms": elapsed_ms,
-                "mode": "yolov8",
-            }), 200
+            detections, vehicle_counts = _run_inference(model, tmp_path)
+        finally:
+            os.remove(tmp_path)
+    else:
+        # ── Base64 JSON body ───────────────────────────────────
+        import cv2
+        data = request.get_json(silent=True) or {}
+        if not data.get("image"):
+            return jsonify({"error": "No image provided. Send a multipart file or base64 image."}), 400
+        img = decode_image(data["image"])
+        tmp_path = os.path.join(upload_folder, f"{uuid.uuid4()}.jpg")
+        cv2.imwrite(tmp_path, img)
+        try:
+            detections, vehicle_counts = _run_inference(model, tmp_path)
         finally:
             os.remove(tmp_path)
 
-    # Fallback: JSON base64 body
-    data = request.get_json(silent=True) or {}
-    if not data.get("image"):
-        return jsonify({"error": "No image provided. Send a multipart file or base64 image."}), 400
+    total   = sum(vehicle_counts.values())
+    density = "high" if total > 50 else ("medium" if total > 20 else "low")
 
-    if not model:
-        return jsonify({"error": "YOLO model unavailable. Ensure ultralytics is installed."}), 503
-
-    img = decode_image(data["image"])
-    tmp_path = os.path.join(current_app.config["UPLOAD_FOLDER"], f"{uuid.uuid4()}.jpg")
-    import cv2
-    cv2.imwrite(tmp_path, img)
-    try:
-        results = model(tmp_path, conf=0.4)
-        r = results[0]
-        detections = [
-            {"class": r.names[int(b.cls)], "confidence": round(float(b.conf), 3),
-             "bbox": [round(x) for x in b.xyxy[0].tolist()]}
-            for b in r.boxes
-        ]
-        vehicle_counts = {}
-        for d in detections:
-            vehicle_counts[d["class"]] = vehicle_counts.get(d["class"], 0) + 1
-        total = sum(vehicle_counts.values())
-        density = "low" if total < 10 else ("medium" if total < 25 else "high")
-        return jsonify({
-            "detections": detections, "vehicle_counts": vehicle_counts,
-            "total_vehicles": total, "density_class": density,
-            "ambulance_detected": "ambulance" in vehicle_counts,
-            "inference_ms": round((time.time() - start) * 1000, 1), "mode": "yolov8",
-        }), 200
-    finally:
-        os.remove(tmp_path)
+    return jsonify({
+        "detections":         detections,
+        "vehicle_counts":     vehicle_counts,
+        "total_vehicles":     total,
+        "density_class":      density,
+        "ambulance_detected": "ambulance" in vehicle_counts,
+        "inference_ms":       round((time.time() - start) * 1000, 1),
+        "model":              "best.pt (custom Indian traffic)",
+    }), 200
 
 
 @detection_bp.route("/ambulance", methods=["POST"])
@@ -154,8 +152,9 @@ def detect_vehicles():
 def detect_ambulance():
     """
     POST /api/detect/ambulance
-    Multipart image → YOLO detection then OpenCV colour/shape analysis.
-    Returns: ambulance_detected, confidence, action, inference_ms, model.
+    Multipart image → YOLO best.pt ambulance class detection,
+    with OpenCV colour/cross analysis as a secondary confirmation.
+    Returns: ambulance_detected, confidence, action, inference_ms, model
     """
     import cv2
 
@@ -172,10 +171,10 @@ def detect_ambulance():
         return jsonify({"error": "Could not decode image. Use JPEG or PNG."}), 400
 
     ambulance_detected = False
-    confidence = 0.0
-    model_used = "opencv_cv_analysis"
+    confidence  = 0.0
+    model_used  = "opencv_cv_analysis"
 
-    # ── Stage 1: YOLO detection ──────────────────────────────────
+    # ── Stage 1: YOLO best.pt ambulance class ───────────────────
     yolo = get_yolo()
     if yolo:
         try:
@@ -184,39 +183,29 @@ def detect_ambulance():
             results = yolo(tmp, conf=0.25, verbose=False)
             r = results[0]
             for box in r.boxes:
-                cls_name = r.names[int(box.cls)].lower()
-                if cls_name in ("ambulance", "emergency vehicle", "ambulance vehicle"):
+                if r.names[int(box.cls)].lower() == "ambulance":
                     ambulance_detected = True
                     confidence = max(confidence, float(box.conf))
             os.remove(tmp)
-            model_used = "yolov8+opencv_cv"
+            model_used = "best.pt"
         except Exception as e:
             current_app.logger.warning(f"YOLO ambulance check failed: {e}")
 
-    # ── Stage 2: OpenCV colour / cross analysis ──────────────────
-    # Always run as a second opinion; override YOLO only if stronger signal
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    total_px = img.shape[0] * img.shape[1] or 1
+    # ── Stage 2: OpenCV colour / cross analysis (secondary) ─────
+    hsv       = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    total_px  = img.shape[0] * img.shape[1] or 1
 
-    # Red mask (two hue ranges for red wrap-around)
-    red_lo1, red_hi1 = np.array([0, 100, 80]),   np.array([10, 255, 255])
-    red_lo2, red_hi2 = np.array([165, 100, 80]),  np.array([180, 255, 255])
     red_mask = cv2.bitwise_or(
-        cv2.inRange(hsv, red_lo1, red_hi1),
-        cv2.inRange(hsv, red_lo2, red_hi2),
+        cv2.inRange(hsv, np.array([0,   100, 80]), np.array([10,  255, 255])),
+        cv2.inRange(hsv, np.array([165, 100, 80]), np.array([180, 255, 255])),
     )
-
-    # Blue lights
-    blue_mask = cv2.inRange(hsv, np.array([100, 120, 100]), np.array([140, 255, 255]))
-
-    # White body
-    white_mask = cv2.inRange(hsv, np.array([0, 0, 190]), np.array([180, 40, 255]))
+    blue_mask  = cv2.inRange(hsv, np.array([100, 120, 100]), np.array([140, 255, 255]))
+    white_mask = cv2.inRange(hsv, np.array([0, 0, 190]),     np.array([180, 40,  255]))
 
     red_r   = np.count_nonzero(red_mask)   / total_px
     blue_r  = np.count_nonzero(blue_mask)  / total_px
     white_r = np.count_nonzero(white_mask) / total_px
 
-    # Horizontal / vertical edge cross pattern
     gray  = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray, 50, 150)
     lines = cv2.HoughLinesP(edges, 1, np.pi / 180,
@@ -229,29 +218,28 @@ def detect_ambulance():
             cross_bonus = 0.12
 
     cv_score = red_r * 4.5 + blue_r * 3.0 + white_r * 0.6 + cross_bonus
-    cv_threshold = 0.05
-
-    if cv_score >= cv_threshold:
+    if cv_score >= 0.05:
         cv_conf = min(0.97, 0.45 + cv_score * 6.0)
         if cv_conf > confidence:
             ambulance_detected = True
             confidence = cv_conf
+            if model_used == "opencv_cv_analysis":
+                model_used = "opencv_cv_analysis"
+            else:
+                model_used = "best.pt+opencv_cv"
     elif not ambulance_detected:
-        # Not detected by either stage
         confidence = min(0.40, cv_score * 6.0)
 
     elapsed = round((time.time() - start) * 1000, 1)
     return jsonify({
         "ambulance_detected": ambulance_detected,
-        "confidence": round(confidence, 4),
+        "confidence":  round(confidence, 4),
         "action": (
             "EMERGENCY OVERRIDE — Crossroad cleared for ambulance passage"
             if ambulance_detected else
             "NORMAL — No ambulance detected"
         ),
         "inference_ms": elapsed,
-        "model": model_used,
-        "cv_score": round(cv_score, 4),
+        "model":        model_used,
+        "cv_score":     round(cv_score, 4),
     }), 200
-
-

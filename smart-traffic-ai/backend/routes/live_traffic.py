@@ -44,7 +44,7 @@ def _init_state():
             "ambulance_detected": False,
             "ambulance_lane": None,
             "ambulance_timer": 0,
-            "model_used": "yolov8",
+            "model_used": "best.pt",
             "fps": 30,
             "inference_ms": 12.0,
             "cycle_count": 0,
@@ -217,7 +217,7 @@ def get_state(iid):
 @live_bp.route("/detect/<int:iid>", methods=["POST"])
 @jwt_required()
 def trigger_detection(iid):
-    model = request.json.get("model", "yolov8") if request.json else "yolov8"
+    model = request.json.get("model", "best.pt") if request.json else "best.pt"
     with _state_lock:
         if iid not in _live_state:
             return jsonify({"error": "Not found"}), 404

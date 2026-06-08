@@ -33,37 +33,27 @@ from flask_jwt_extended import jwt_required
 
 crossroad_bp = Blueprint("crossroad", __name__)
 
-# ── Indian traffic vehicle classes ─────────────────────────────
-INDIAN_VEHICLES = [
-    "car", "motorcycle", "auto_rickshaw",
-    "bus", "truck", "bicycle", "pedestrian", "ambulance"
-]
+# ── Vehicle classes that best.pt was trained on ─────────────────
+# Matches data.yaml: car(0) motorcycle(1) bus(2) truck(3) ambulance(4)
+INDIAN_VEHICLES = ["car", "motorcycle", "bus", "truck", "ambulance"]
 
-# Map COCO class names → Indian traffic classes
+# Normalise any raw model output name variants to canonical names
 COCO_TO_INDIAN = {
-    "car":           "car",
-    "motorcycle":    "motorcycle",
-    "bicycle":       "bicycle",
-    "bus":           "bus",
-    "truck":         "truck",
-    "person":        "pedestrian",
-    "rickshaw":      "auto_rickshaw",
-    "auto":          "auto_rickshaw",
-    "ambulance":     "ambulance",
-    "van":           "car",
-    "motorbike":     "motorcycle",
-    "three-wheeler": "auto_rickshaw",
+    "car":        "car",
+    "van":        "car",
+    "motorcycle": "motorcycle",
+    "motorbike":  "motorcycle",
+    "bus":        "bus",
+    "truck":      "truck",
+    "ambulance":  "ambulance",
 }
 
 VEHICLE_WEIGHT = {
-    "car":           1.0,
-    "motorcycle":    0.5,
-    "auto_rickshaw": 0.8,
-    "bus":           2.5,
-    "truck":         2.0,
-    "bicycle":       0.3,
-    "pedestrian":    0.2,
-    "ambulance":     10.0,  # highest priority weight
+    "car":        1.0,
+    "motorcycle": 0.5,
+    "bus":        2.5,
+    "truck":      2.0,
+    "ambulance":  10.0,  # absolute priority — triggers emergency override
 }
 
 ROADS = ["north", "south", "east", "west"]
@@ -130,9 +120,11 @@ PHASES = {
 }
 
 YOLO_MODELS = {
-    # ── YOLOv11 (Latest — default) ────────────────────────────
+    # ── Custom trained on Indian traffic (5 classes: car/motorcycle/bus/truck/ambulance)
+    "custom":   {"name": "Custom Indian Traffic", "speed": "fast", "map": "trained", "rec": True},
+    # ── YOLOv11 (Latest) ──────────────────────────────────────
     "yolov11n": {"name": "YOLOv11n", "speed": "fastest", "map": "39.5", "rec": False},
-    "yolov11s": {"name": "YOLOv11s", "speed": "fast",    "map": "47.0", "rec": True},
+    "yolov11s": {"name": "YOLOv11s", "speed": "fast",    "map": "47.0", "rec": False},
     "yolov11m": {"name": "YOLOv11m", "speed": "medium",  "map": "51.5", "rec": False},
     # ── YOLOv8 (stable) ───────────────────────────────────────
     "yolov8n":  {"name": "YOLOv8n",  "speed": "fastest", "map": "37.3", "rec": False},
@@ -145,15 +137,34 @@ YOLO_MODELS = {
 }
 
 
-# ── Signal timing formula for Indian traffic ───────────────────
-def green_duration(vehicle_count: int, congestion_score: float) -> int:
-    if vehicle_count == 0: return 0
-    if vehicle_count <= 10:  return 15
-    if vehicle_count <= 25:  return 25
-    if vehicle_count <= 50:  return 40
-    if vehicle_count <= 80:  return 55
-    if vehicle_count <= 120: return 70
-    return 90
+# ── Dynamic signal timing — Webster's formula (Indian traffic) ─
+_MIN_GREEN  = 15   # IRC minimum pedestrian crossing time
+_MAX_GREEN  = 90   # practical cap
+_LOST_TIME  = 4 * 4  # 4 phases × 4 s lost per phase change (amber + all-red)
+
+
+def _webster_cycle(total_pcu: float) -> int:
+    """
+    Webster optimal cycle: C = (1.5L + 5) / (1 - Y)
+    L = total lost time, Y = saturation ratio (capped at 0.85)
+    Adapted for Indian 4-phase intersection PCU loads.
+    """
+    y = min(0.85, total_pcu / 150.0)
+    c = (1.5 * _LOST_TIME + 5) / max(0.05, 1.0 - y)
+    return max(60, min(180, round(c)))
+
+
+def green_duration(phase_pcu: float, total_pcu: float) -> int:
+    """
+    Proportional green allocation within a Webster cycle.
+    A phase with higher PCU share gets proportionally more green time.
+    """
+    if total_pcu <= 0 or phase_pcu <= 0:
+        return _MIN_GREEN
+    cycle      = _webster_cycle(total_pcu)
+    effective  = cycle - _LOST_TIME          # usable green seconds in cycle
+    proportion = min(1.0, phase_pcu / total_pcu)
+    return max(_MIN_GREEN, min(_MAX_GREEN, round(proportion * effective)))
 
 
 def compute_pcu(vehicle_counts: dict) -> float:
@@ -335,11 +346,12 @@ def update_signals():
     # Primary road for backward compat (first road in phase pair)
     _crossroad["active_road"] = active_roads[0]
 
+    # Proportional green: winning phase gets time relative to its PCU share
+    total_score = sum(v for v in phase_scores.values())
+    dur = green_duration(best_score, total_score)
+
     for r in ROADS:
         if r in active_roads:
-            vc  = road_states[r].get("total_vehicles", 0)
-            cs  = road_states[r].get("congestion_score", 0.5)
-            dur = green_duration(vc, cs)
             _crossroad["roads"][r]["signal"]         = "green"
             _crossroad["roads"][r]["green_duration"] = dur
         else:
@@ -350,7 +362,12 @@ def update_signals():
 
 
 # ── YOLO / OpenCV processing ───────────────────────────────────
+_CUSTOM_YOLO_WEIGHTS = os.path.join(
+    os.path.dirname(__file__), "../../ml_models/weights/best.pt"
+)
+
 ULTRALYTICS_MAP = {
+    "custom":   _CUSTOM_YOLO_WEIGHTS,   # trained on Indian traffic dataset
     "yolov11n": "yolo11n.pt", "yolov11s": "yolo11s.pt", "yolov11m": "yolo11m.pt",
     "yolov8n":  "yolov8n.pt", "yolov8s":  "yolov8s.pt",
     "yolov8m":  "yolov8m.pt", "yolov8l":  "yolov8l.pt",
@@ -367,11 +384,14 @@ def _get_yolo(model_key: str):
             try:
                 from ultralytics import YOLO
                 mfile = ULTRALYTICS_MAP.get(model_key)
-                if mfile:
-                    _yolo_cache[model_key] = YOLO(mfile)
-                    print(f"[YOLO] loaded {mfile}")
-                else:
+                if not mfile:
                     _yolo_cache[model_key] = None
+                elif model_key == "custom" and not os.path.exists(mfile):
+                    print(f"[YOLO] Custom weights not found at {mfile} — place best.pt there and restart")
+                    _yolo_cache[model_key] = None
+                else:
+                    _yolo_cache[model_key] = YOLO(mfile)
+                    print(f"[YOLO] loaded {model_key}: {mfile}")
             except Exception as e:
                 print(f"[YOLO] load failed for {model_key}: {e}")
                 _yolo_cache[model_key] = None
@@ -424,21 +444,27 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
             if yolo_model:
                 # ── Real YOLO inference ────────────────────────
                 try:
-                    results = yolo_model(frame, verbose=False, conf=0.30)
+                    # Run at low conf so ambulance detections aren't silently dropped;
+                    # per-class filtering below applies the real thresholds.
+                    results = yolo_model(frame, verbose=False, conf=0.25)
                     r = results[0]
                     vehicle_counts = {}
                     detections     = []
                     for box in r.boxes:
-                        raw    = r.names[int(box.cls)].lower()
-                        mapped = COCO_TO_INDIAN.get(raw, raw)
-                        if mapped in INDIAN_VEHICLES:
-                            vehicle_counts[mapped] = vehicle_counts.get(mapped, 0) + 1
-                            x1, y1, x2, y2 = [round(x) for x in box.xyxy[0].tolist()]
-                            detections.append({
-                                "class":      mapped,
-                                "confidence": round(float(box.conf), 3),
-                                "bbox":       [x1, y1, x2, y2],
-                            })
+                        raw      = r.names[int(box.cls)].lower()
+                        mapped   = COCO_TO_INDIAN.get(raw, raw)
+                        conf_val = float(box.conf)
+                        # Ambulance is safety-critical — keep lower threshold
+                        min_conf = 0.30 if mapped == "ambulance" else 0.40
+                        if conf_val < min_conf or mapped not in INDIAN_VEHICLES:
+                            continue
+                        vehicle_counts[mapped] = vehicle_counts.get(mapped, 0) + 1
+                        x1, y1, x2, y2 = [round(x) for x in box.xyxy[0].tolist()]
+                        detections.append({
+                            "class":      mapped,
+                            "confidence": round(conf_val, 3),
+                            "bbox":       [x1, y1, x2, y2],
+                        })
                 except Exception:
                     vehicle_counts = {}
                     detections     = []
@@ -764,7 +790,7 @@ def upload_road_video(road):
         return jsonify({"error": "No video file"}), 400
 
     file      = request.files["video"]
-    model_key = request.form.get("model", "yolov8s")
+    model_key = request.form.get("model", "custom")
     location  = request.form.get("location", "")
 
     if not file.filename:
@@ -775,7 +801,7 @@ def upload_road_video(road):
         return jsonify({"error": f"Unsupported format. Use: {', '.join(ALLOWED_EXTS)}"}), 400
 
     if model_key not in YOLO_MODELS:
-        model_key = "yolov8s"
+        model_key = "custom"
 
     upload_folder = current_app.config.get("UPLOAD_FOLDER", "/tmp")
     filename      = f"road_{road}_{uuid.uuid4().hex}{ext}"

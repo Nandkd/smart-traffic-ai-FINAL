@@ -22,7 +22,7 @@ class BaseConfig:
     # ML model paths
     YOLO_WEIGHTS = os.getenv(
         "YOLO_WEIGHTS_PATH",
-        str(BASE_DIR.parent / "ml_models" / "weights" / "yolov8_traffic.pt"),
+        str(BASE_DIR.parent / "ml_models" / "weights" / "best.pt"),
     )
     CNN_WEIGHTS = os.getenv(
         "CNN_WEIGHTS_PATH",

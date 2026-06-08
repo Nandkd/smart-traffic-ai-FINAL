@@ -59,6 +59,11 @@ const PHASES = {
 
 const ALLOWED = ['.mp4','.avi','.mov','.mkv','.webm','.wmv']
 
+// ── Presentation mode flag ───────────────────────────────────
+// false → clean video feed optimised for YOLO detection visibility (default)
+// true  → re-enables vignette, scanlines, and scanner sweep for CCTV realism
+const CCTV_REALISM_MODE = false
+
 // ── Live clock hook ──────────────────────────────────────────
 function useLiveClock() {
   const [time, setTime] = useState(() => new Date().toLocaleTimeString('en-GB'))
@@ -109,42 +114,46 @@ function DetectionBoxes({ vehicleCounts }) {
           key={i}
           className="absolute"
           initial={{ opacity: 0 }}
-          animate={{ opacity: [0.55, 0.95, 0.55] }}
-          transition={{ duration: 2.2 + i * 0.25, repeat: Infinity, delay: i * 0.12 }}
+          animate={CCTV_REALISM_MODE ? { opacity: [0.55, 0.95, 0.55] } : { opacity: 1 }}
+          transition={CCTV_REALISM_MODE
+            ? { duration: 2.2 + i * 0.25, repeat: Infinity, delay: i * 0.12 }
+            : { duration: 0.3 }}
           style={{
             left: `${box.x}%`, top: `${box.y}%`,
             width: `${box.w}%`, height: `${box.h}%`,
-            border: `1.5px solid ${box.color}`,
-            boxShadow: `0 0 6px ${box.color}55`,
+            border: `2.5px solid ${box.color}`,
+            boxShadow: `0 0 10px ${box.color}99, inset 0 0 6px ${box.color}22`,
           }}
         >
           {/* label tag */}
           <div
-            className="absolute -top-[14px] left-0 text-[7px] font-mono font-bold
-                       px-1 py-px leading-none whitespace-nowrap"
-            style={{ background: box.color + 'cc', color: '#000' }}
+            className="absolute -top-[16px] left-0 text-[9px] font-mono font-bold
+                       px-1.5 py-0.5 leading-none whitespace-nowrap"
+            style={{ background: box.color + 'dd', color: '#000' }}
           >
             {box.label}
           </div>
           {/* corner marks */}
           {[
-            'absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2',
-            'absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2',
-            'absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2',
-            'absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2',
+            'absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2',
+            'absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2',
+            'absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2',
+            'absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2',
           ].map((cls, j) => (
             <div key={j} className={cls} style={{ borderColor: box.color }} />
           ))}
         </motion.div>
       ))}
 
-      {/* Horizontal scanner sweep */}
-      <motion.div
-        className="absolute left-0 right-0 h-px pointer-events-none"
-        style={{ background: 'linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent)' }}
-        animate={{ top: ['8%', '92%', '8%'] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: 'linear' }}
-      />
+      {/* Horizontal scanner sweep — only in realism mode */}
+      {CCTV_REALISM_MODE && (
+        <motion.div
+          className="absolute left-0 right-0 h-px pointer-events-none"
+          style={{ background: 'linear-gradient(90deg,transparent,rgba(34,197,94,0.5),transparent)' }}
+          animate={{ top: ['8%', '92%', '8%'] }}
+          transition={{ duration: 4.5, repeat: Infinity, ease: 'linear' }}
+        />
+      )}
     </div>
   )
 }
@@ -196,16 +205,28 @@ function CCTVFeed({ road, videoUrl, state }) {
         </div>
       )}
 
-      {/* Overlays: dark vignette + gradient bars */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.65) 100%)' }} />
-      <div className="absolute inset-x-0 top-0 h-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.75), transparent)' }} />
-      <div className="absolute inset-x-0 bottom-0 h-10 pointer-events-none"
-        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)' }} />
-      {/* Scanlines texture */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
-        style={{ backgroundImage: 'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)' }} />
+      {/* Overlays — controlled by CCTV_REALISM_MODE */}
+      {CCTV_REALISM_MODE ? (
+        <>
+          {/* Full realism: heavy vignette + dark gradient bars + scanlines */}
+          <div className="absolute inset-0 pointer-events-none"
+            style={{ background: 'radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.65) 100%)' }} />
+          <div className="absolute inset-x-0 top-0 h-10 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.75), transparent)' }} />
+          <div className="absolute inset-x-0 bottom-0 h-10 pointer-events-none"
+            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.75), transparent)' }} />
+          <div className="absolute inset-0 pointer-events-none opacity-[0.025]"
+            style={{ backgroundImage: 'repeating-linear-gradient(0deg,#fff 0px,#fff 1px,transparent 1px,transparent 3px)' }} />
+        </>
+      ) : (
+        <>
+          {/* Clean mode: subtle gradient bars only — just enough to keep HUD text legible */}
+          <div className="absolute inset-x-0 top-0 h-8 pointer-events-none"
+            style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.45), transparent)' }} />
+          <div className="absolute inset-x-0 bottom-0 h-8 pointer-events-none"
+            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.45), transparent)' }} />
+        </>
+      )}
 
       {/* ── Top-left: camera ID + road name ── */}
       <div className="absolute top-1.5 left-2 flex flex-col gap-0.5 z-10">
@@ -435,7 +456,7 @@ function Timeline({ frames }) {
 
 // ── Road Panel ───────────────────────────────────────────────
 function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onClearAmb, onOverride, onReset }) {
-  const [model, setModel]       = useState('yolov8s')
+  const [model, setModel]       = useState('custom')
   const [drag, setDrag]         = useState(false)
   const [showOverride, setOver] = useState(false)
   const [overDur, setOverDur]   = useState(30)
@@ -529,21 +550,11 @@ function RoadPanel({ road, state, models, videoUrl, onUpload, onAmbulance, onCle
             <p className="text-xs font-mono text-slate-500 mb-1.5">YOLO MODEL</p>
             <select value={model} onChange={e => setModel(e.target.value)}
               className="w-full bg-slate-800 border border-white/10 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-crimson-500/40">
-              <optgroup label="── YOLOv11 (Latest)">
-                {['yolov11n','yolov11s','yolov11m'].map(k => (
-                  <option key={k} value={k}>{models[k] ? `${models[k].name} — ${models[k].speed} · ${models[k].map}% mAP` : k}</option>
-                ))}
-              </optgroup>
-              <optgroup label="── YOLOv8 ✅ Recommended">
-                {['yolov8n','yolov8s','yolov8m','yolov8l'].map(k => (
-                  <option key={k} value={k}>{models[k] ? `${models[k].name} — ${models[k].speed} · ${models[k].map}% mAP${models[k].rec ? ' ★' : ''}` : k}</option>
-                ))}
-              </optgroup>
-              <optgroup label="── YOLOv9 / v10">
-                {['yolov9c','yolov10s'].map(k => (
-                  <option key={k} value={k}>{models[k] ? `${models[k].name} — ${models[k].speed}` : k}</option>
-                ))}
-              </optgroup>
+              <option value="custom">
+                {models['custom']
+                  ? `${models['custom'].name} — ${models['custom'].desc}`
+                  : 'Custom Indian Traffic Model — car, motorcycle, bus, truck, ambulance'}
+              </option>
             </select>
           </div>
           <div
