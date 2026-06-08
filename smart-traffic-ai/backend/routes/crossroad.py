@@ -60,13 +60,15 @@ ROADS = ["north", "south", "east", "west"]
 ALLOWED_EXTS = {".mp4", ".avi", ".mov", ".mkv", ".webm", ".wmv", ".flv"}
 
 # ── Faster R-CNN lazy loader (module-level singleton) ──────────
-_frcnn_model = None
-_frcnn_lock  = threading.Lock()
+_frcnn_model      = None
+_frcnn_lock       = threading.Lock()
+_frcnn_diag_count = 0   # number of rejected ambulance crops saved to disk so far
 
 
 def _get_faster_rcnn():
     """
     Return the shared FasterRCNNPredictor for ambulance verification.
+    Score threshold is read from FASTER_RCNN_SCORE_THRESHOLD app config (default 0.30).
     Safe to call from multiple road-processing threads simultaneously.
     Returns None if weights are missing so detection degrades gracefully.
     """
@@ -76,11 +78,13 @@ def _get_faster_rcnn():
             if _frcnn_model is None:
                 try:
                     from flask import current_app
-                    weights = current_app.config.get("FASTER_RCNN_WEIGHTS")
+                    weights   = current_app.config.get("FASTER_RCNN_WEIGHTS")
+                    threshold = current_app.config.get("FASTER_RCNN_SCORE_THRESHOLD", 0.30)
                 except RuntimeError:
-                    weights = None
+                    weights   = None
+                    threshold = 0.30
                 from ml_models.faster_rcnn.predictor import get_faster_rcnn as _load
-                _frcnn_model = _load(weights) or "unavailable"
+                _frcnn_model = _load(weights, score_threshold=threshold) or "unavailable"
     return _frcnn_model if _frcnn_model != "unavailable" else None
 
 # ── JSON Event Schema ──────────────────────────────────────────
@@ -573,6 +577,44 @@ def process_road_video(road: str, video_path: str, model_key: str, job_id: str, 
                             if x2 > x1 and y2 > y1:
                                 crop = frame[y1:y2, x1:x2]
                                 frcnn_result = frcnn.verify_numpy(crop)
+
+                                # ── Scenario detection ──────────────────────
+                                raw_labels = frcnn_result.get("raw_labels", [])
+                                raw_scores = frcnn_result.get("raw_scores", [])
+                                has_amb_cls = any(l == 2 for l in raw_labels)
+                                if frcnn_result["ambulance_confirmed"]:
+                                    print(
+                                        f"[{road}] FRCNN CONFIRMED t={ts_sec:.2f}s "
+                                        f"conf={frcnn_result['confidence']:.4f} "
+                                        f"preds={list(zip(raw_labels[:3], raw_scores[:3]))}"
+                                    )
+                                else:
+                                    scenario = (
+                                        "B: label=2 below threshold"
+                                        if has_amb_cls else
+                                        "A: no label=2 — class mismatch"
+                                    )
+                                    print(
+                                        f"[{road}] FRCNN REJECTED t={ts_sec:.2f}s "
+                                        f"scenario={scenario} "
+                                        f"conf={frcnn_result['confidence']:.4f} "
+                                        f"preds={list(zip(raw_labels[:3], raw_scores[:3]))}"
+                                    )
+                                    # Save first 3 rejected crops for offline smoke test
+                                    global _frcnn_diag_count
+                                    if _frcnn_diag_count < 3:
+                                        diag_dir = os.path.join(
+                                            os.path.dirname(__file__), "..", "uploads", "frcnn_diag"
+                                        )
+                                        os.makedirs(diag_dir, exist_ok=True)
+                                        diag_path = os.path.join(
+                                            diag_dir, f"ambulance_{road}_{_frcnn_diag_count}.jpg"
+                                        )
+                                        cv2.imwrite(diag_path, crop)
+                                        print(f"[{road}] Diagnostic crop saved → {diag_path}")
+                                        _frcnn_diag_count += 1
+                                # ───────────────────────────────────────────
+
                                 if frcnn_result["ambulance_confirmed"]:
                                     frcnn_verified = True
                                 else:

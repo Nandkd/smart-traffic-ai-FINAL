@@ -85,10 +85,11 @@ _predictor_instance = None
 _predictor_lock = threading.Lock()
 
 
-def get_faster_rcnn(weights_path: str = None):
+def get_faster_rcnn(weights_path: str = None, score_threshold: float = None):
     """
     Return the shared FasterRCNNPredictor, loading it on first call.
 
+    score_threshold overrides DEFAULT_SCORE_THRESHOLD when provided.
     Returns None (not an exception) when the weight file is absent so that
     callers fall back to YOLO-only detection instead of crashing.
     """
@@ -96,7 +97,7 @@ def get_faster_rcnn(weights_path: str = None):
     if _predictor_instance is None:
         with _predictor_lock:
             if _predictor_instance is None:   # double-checked locking
-                _predictor_instance = _load(weights_path)
+                _predictor_instance = _load(weights_path, score_threshold)
     return _predictor_instance if _predictor_instance != "unavailable" else None
 
 
@@ -104,7 +105,7 @@ def get_faster_rcnn(weights_path: str = None):
 # Internal loader
 # ---------------------------------------------------------------------------
 
-def _load(weights_path: str = None):
+def _load(weights_path: str = None, score_threshold: float = None):
     w = Path(weights_path) if weights_path else DEFAULT_WEIGHTS
     if not w.exists():
         _log(
@@ -114,8 +115,9 @@ def _load(weights_path: str = None):
             f"        Until then, YOLO detections are trusted without secondary check."
         )
         return "unavailable"
+    effective_threshold = score_threshold if score_threshold is not None else DEFAULT_SCORE_THRESHOLD
     try:
-        p = FasterRCNNPredictor(str(w))
+        p = FasterRCNNPredictor(str(w), score_threshold=effective_threshold)
         _log(
             f"[frcnn] Loaded  : {w.name}\n"
             f"        Device  : {p.device}\n"
@@ -216,6 +218,23 @@ class FasterRCNNPredictor:
         labels = preds.get("labels", torch.tensor([])).cpu().tolist()
         scores = preds.get("scores", torch.tensor([])).cpu().tolist()
 
+        # ── Diagnostic: log every raw prediction ──────────────────
+        if labels:
+            for lbl, sc in zip(labels, scores):
+                name = CLASS_MAP.get(lbl, f"unknown({lbl})")
+                if lbl == AMBULANCE_LABEL and sc >= self.score_threshold:
+                    tag = " <-- AMBULANCE CONFIRMED"
+                elif lbl == AMBULANCE_LABEL:
+                    tag = f" <-- ambulance class but score {sc:.4f} < threshold {self.score_threshold} [SCENARIO B]"
+                elif lbl == VEHICLE_LABEL:
+                    tag = " (vehicle class — suppressed) [SCENARIO A if only this appears]"
+                else:
+                    tag = ""
+                _log(f"[frcnn] label={lbl} ({name}) score={sc:.4f}{tag}")
+        else:
+            _log("[frcnn] no detections returned from this crop")
+        # ──────────────────────────────────────────────────────────
+
         best_ambulance_score = 0.0
 
         for lbl, sc in zip(labels, scores):
@@ -235,6 +254,8 @@ class FasterRCNNPredictor:
             "model":               "faster_rcnn_ambulance_vehicle",
             "class_map":           CLASS_MAP,
             "ambulance_label":     AMBULANCE_LABEL,
+            "raw_labels":          labels,
+            "raw_scores":          [round(s, 4) for s in scores],
         }
 
 

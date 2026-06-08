@@ -32,6 +32,10 @@ class BaseConfig:
         "FASTER_RCNN_WEIGHTS_PATH",
         str(BASE_DIR.parent / "ml_models" / "weights" / "faster_rcnn_ambulance_vehicle.pth"),
     )
+    # Minimum class-2 score for FRCNN to confirm an ambulance.
+    # Default 0.30 — Indian ambulances score lower than Western training data.
+    # Override via environment variable FASTER_RCNN_SCORE_THRESHOLD.
+    FASTER_RCNN_SCORE_THRESHOLD = float(os.getenv("FASTER_RCNN_SCORE_THRESHOLD", "0.30"))
     ENSEMBLE_PATH = os.getenv(
         "ENSEMBLE_PATH",
         str(BASE_DIR.parent / "ml_models" / "weights" / "congestion_ensemble.pkl"),
